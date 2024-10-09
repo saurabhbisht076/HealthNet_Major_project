@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Set up the base URL from environment variable
-const API_URL = process.env.REACT_APP_API_URL; // e.g., http://localhost:5000/api
+const API_URL =   "https://localhost:5000/api"
 
 // User Registration
 export const registerUser = async (userData) => {

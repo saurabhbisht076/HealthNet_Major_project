@@ -1,9 +1,5 @@
-
 const express = require('express');
 const MedicalReport = require('../models/MedicalReport');
-const { create } = require('ipfs-http-client');
-
-const ipfsClient = create({ url: 'https://ipfs.infura.io:5001/api/v0' });
 const router = express.Router();
 
 // Upload Medical Report
@@ -12,11 +8,9 @@ router.post('/upload', async (req, res) => {
 
     try {
         const fileBuffer = req.files.file.data; // Assuming file is sent as FormData
-
-        // Upload file to IPFS
-        const result = await ipfsClient.add(fileBuffer);
         
-        const reportData = result.path; // Get the IPFS hash
+        // Save the file data directly into the reportData field
+        const reportData = fileBuffer.toString('base64'); // Example of encoding the file as a base64 string
         
         const report = new MedicalReport({ patientId, reportData });
         await report.save();
@@ -38,4 +32,3 @@ router.get('/:patientId', async (req, res) => {
 });
 
 module.exports = router;
-

@@ -9,13 +9,13 @@ const PatientDashboard = ({ patientId }) => {
    useEffect(() => {
        const fetchReportsAndInfo= async () => {
            try {
-               const reportResponse= await axios.get(`/api/reports/${patientId}`);
+               const reportResponse= await axios.get(`https://localhost:5000/api/reports/${patientId}`);
                setReports(reportResponse.data);
 
-               const hospitalResponse= await axios.get('/api/hospitals');
+               const hospitalResponse= await axios.get(`https://localhost:500/api/hospitals`);
                setHospitals(hospitalResponse.data);
 
-               const doctorResponse= await axios.get('/api/doctors');
+               const doctorResponse= await axios.get(`https://localhost:500/api/doctor`);
                setDoctors(doctorResponse.data);
            } catch (error) {
                console.error('Error fetching data:', error);

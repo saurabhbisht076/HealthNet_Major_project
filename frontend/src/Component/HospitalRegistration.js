@@ -9,7 +9,7 @@ const HospitalRegistration = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/hospitals`, {
+            const response = await axios.post("https://localhost/5000/api/hospitals", {
                 name,
                 location,
                 facilities: facilities.split(',').map(facility => facility.trim()), // Convert comma-separated string to array
