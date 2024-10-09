@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from './Component/navbar'; 
-import Login from './Component/LoginPage';
+import Login from './Component/LoginPage'; 
+import HospitalRegistration from './Component/HospitalRegistration'; 
+import PatientDashboard from './Component/PatientDashboard'; 
 
 function App() {
     useEffect(() => {
@@ -90,11 +93,14 @@ function App() {
         };
     }, []);
 
-
     return (
-        <div className="w-full bg-zinc-900 ">
-             
-        <Navbar />
+        <div className="w-full bg-zinc-900">
+            <Navbar />
+            
+            {/* Include Hospital Registration and Patient Dashboard */}
+            <HospitalRegistration />
+            <PatientDashboard patientId="12345" /> {/* Replace with actual patient ID */}
+
             <div className="parent relative w-full h-[1400vh]">
                 <div className="w-full sticky top-0 left-0 h-screen">
                     <canvas className="w-full h-screen" id="canvas"></canvas>
@@ -102,13 +108,9 @@ function App() {
             </div>
             
             <div className="fixed top-28 left-14 w-80 overflow-y-auto z-20">
-               
                 <div className="backdrop-blur-lg bg-white/20 p-4 shadow-lg rounded-lg">
                     <Login />
                 </div>
-
-                
-            
             </div>
         </div>
     );
