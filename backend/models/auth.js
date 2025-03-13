@@ -14,6 +14,7 @@ const authSchema = new mongoose.Schema({
       return this.userType === "Doctor";
     },
   },
+  
   speciality: {
     type: String,
     required: function () {
