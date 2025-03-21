@@ -137,11 +137,14 @@ export default function ViewLocation() {
     ).location;
   }
 
+  
+  
+
   return (
     <div className={styles.container}>
-      <header className={styles.navbar}>
+      {/* <header className={styles.navbar}>
         <h1>View Location</h1>
-      </header>
+      </header> */}
       <div className={styles.controls}>
         <label>
           Range (km):{" "}
