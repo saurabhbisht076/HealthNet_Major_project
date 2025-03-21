@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  GoogleMap,
+  Marker,
+  DirectionsRenderer,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 import axios from "axios";
 import styles from "./ViewLocation.module.css";
 
@@ -22,7 +27,8 @@ export default function ViewLocation() {
           const { latitude, longitude } = position.coords;
           setUserLocation({ lat: latitude, lng: longitude });
         },
-        () => {
+        (error) => {
+          console.error("Geolocation error:", error);
           setError("Unable to retrieve your location.");
         }
       );
@@ -38,39 +44,85 @@ export default function ViewLocation() {
     const fetchHospitals = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/hospitals", {
-          params: {
-            lat: userLocation.lat,
-            lng: userLocation.lng,
-            range: range,
-          },
+          params: { lat: userLocation.lat, lng: userLocation.lng, range },
         });
 
+        if (!response.data || !Array.isArray(response.data)) {
+          throw new Error("Invalid data format from API.");
+        }
+
         console.log("Fetched hospitals:", response.data);
-        setHospitals(response.data); // Hospitals are already filtered by backend
+        setHospitals(response.data);
       } catch (error) {
         console.error("Error fetching hospitals:", error);
+        setError("Failed to load hospitals.");
       }
     };
 
     fetchHospitals();
   }, [userLocation, range]);
 
-  // Find and show shortest path to nearest hospital
+  // Utility: Haversine Distance Calculation
+  const haversineDistance = useCallback((coord1, hospital) => {
+    if (!hospital?.location?.coordinates) return Infinity;
+
+    const toRad = (angle) => (angle * Math.PI) / 180;
+    const R = 6371; // Earth's radius in km
+
+    const lat2 = hospital.location.coordinates[1];
+    const lng2 = hospital.location.coordinates[0];
+
+    const dLat = toRad(lat2 - coord1.lat);
+    const dLng = toRad(lng2 - coord1.lng);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(coord1.lat)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  }, []);
+
+  // Find the closest hospital
+  const findClosestHospital = useCallback(
+    (userLocation, hospitals) => {
+      if (!hospitals.length) return null;
+
+      return hospitals.reduce(
+        (closest, hospital) => {
+          const distance = haversineDistance(userLocation, hospital);
+          return distance < closest.distance
+            ? {
+                location: {
+                  lat: hospital.location.coordinates[1],
+                  lng: hospital.location.coordinates[0],
+                },
+                distance,
+              }
+            : closest;
+        },
+        { location: null, distance: Infinity }
+      ).location;
+    },
+    [haversineDistance]
+  );
+
+  // Find and show the shortest path to the nearest hospital
   useEffect(() => {
     if (!userLocation || !showNearest || !isLoaded) return;
 
-    // If range is 0, reset everything
     if (range <= 0) {
       setDirections(null);
       return;
     }
 
-    // Filter hospitals within range
     const hospitalsInRange = hospitals.filter(
       (hospital) => haversineDistance(userLocation, hospital) <= range
     );
 
-    // If no hospitals are in range, reset directions and return
     if (hospitalsInRange.length === 0) {
       setDirections(null);
       return;
@@ -100,58 +152,17 @@ export default function ViewLocation() {
         }
       }
     );
-  }, [userLocation, showNearest, hospitals, range, isLoaded]);
-
-  // Utility: Haversine Distance Calculation
-  function haversineDistance(coord1, hospital) {
-    const toRad = (angle) => (angle * Math.PI) / 180;
-    const R = 6371; // Earth's radius in km
-
-    const lat2 = hospital.location.coordinates[1];
-    const lng2 = hospital.location.coordinates[0];
-
-    const dLat = toRad(lat2 - coord1.lat);
-    const dLng = toRad(lng2 - coord1.lng);
-
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(coord1.lat)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
-  }
-
-  // Find the closest hospital
-  function findClosestHospital(userLocation, hospitals) {
-    return hospitals.reduce(
-      (closest, hospital) => {
-        const distance = haversineDistance(userLocation, hospital);
-        return distance < closest.distance
-          ? { location: { lat: hospital.location.coordinates[1], lng: hospital.location.coordinates[0] }, distance }
-          : closest;
-      },
-      { location: null, distance: Infinity }
-    ).location;
-  }
-
-  
-  
+  }, [userLocation, showNearest, hospitals, range, isLoaded, findClosestHospital, haversineDistance]);
 
   return (
     <div className={styles.container}>
-      {/* <header className={styles.navbar}>
-        <h1>View Location</h1>
-      </header> */}
       <div className={styles.controls}>
         <label>
           Range (km):{" "}
           <input
             type="number"
             value={range}
-            onChange={(e) => setRange(Number(e.target.value))}
+            onChange={(e) => setRange(Math.max(0, Number(e.target.value)))}
             min="0"
           />
         </label>
@@ -159,6 +170,7 @@ export default function ViewLocation() {
           {showNearest ? "Show All Hospitals" : "Show Nearest Hospital"}
         </button>
       </div>
+
       <div className={styles.content}>
         {error ? (
           <p className={styles.error}>{error}</p>
