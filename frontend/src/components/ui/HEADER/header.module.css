@@ -198,3 +198,8 @@
     gap: 1rem;
   }
 }
+
+/* Global rule to ensure all links are without underline */
+a {
+  text-decoration: none;
+}
