@@ -34,7 +34,7 @@ export default function Navbar() {
   return (
     <div className={styles.appBar}>
       <p className={styles.userName}>
-        {userName ? `Hello, ${userName}` : "Welcome!"}
+        {userName ? `${userName}` : "Welcome!"}
       </p>
       <Tooltip title="Log Out">
         <IconButton onClick={handleLogOut} sx={{ p: 0 }}>
