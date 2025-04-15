@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import styles from "./header.module.css";
+import styles from "./Header.module.css";
 
-const Header = () => {
+const Header = ({ openSignupModal }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -61,15 +61,15 @@ const Header = () => {
               Emergency
             </Link>
             <button className={styles.searchButton}>
-              <span>🔍</span>
+              <span></span>
             </button>
             <Link to="/signin" className={styles.signInButton}>
               <span>👤</span>
-              Sign In
             </Link>
-            <Link to="/signup" className={styles.getStartedButton}>
+            {/* Changed from Link to button with onClick handler */}
+            <button onClick={openSignupModal} className={styles.getStartedButton}>
               Get Started
-            </Link>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -100,9 +100,10 @@ const Header = () => {
               <span>👤</span>
               Sign In
             </Link>
-            <Link to="/signup" className={styles.mobileGetStartedButton}>
+            {/* Changed from Link to button with onClick handler */}
+            <button onClick={openSignupModal} className={styles.mobileGetStartedButton}>
               Get Started
-            </Link>
+            </button>
             <button className={styles.mobileSearchButton}>
               <span>🔍</span>
               Search
