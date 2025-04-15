@@ -1,4 +1,4 @@
-.container {
+/* .container {
     display: flex;
     flex: 1;
     justify-content: center;
@@ -20,4 +20,113 @@
     -ms-transform: scale(1.03);
     -webkit-transform: scale(1.03);
     transform: scale(1.03);
-  }
+  } */
+
+  /* ---------------------------- original---------------------------- */
+
+ /* DashTabs.module.css */
+
+ /* DashTabs.module.css */
+/* DashTabs.module.css */
+/* DashTabs.module.css */
+/* DashTabs.module.css */
+/* DashTabs.module.css */
+
+.container {
+  padding: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2 rem;
+}
+
+.card {
+  position: relative;
+  border-radius: 30px;
+  overflow: hidden;
+  cursor: pointer;
+  height: 300px;
+  width: 100%;
+  min-width: 290px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2);
+  border: 3px solid #7db7f5; /* Bluish border */
+}
+
+/* Optional: Animated bluish glow effect */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 30px;
+  border: 2px solid transparent;
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+.card:hover::after {
+  border-color: rgba(88, 157, 231, 0.4);
+  transform: scale(1.02);
+}
+
+.cardImage {
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .cardImage {
+  transform: scale(1.03);
+}
+
+.cardTitleArea {
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 0 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.cardTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+ 
+  color: #333;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+.cardDescription {
+  color: #666;
+  font-size: 1 rem;
+  line-height: 1.4;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  display: -webkit-box;
+  margin-top: 10px;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: center;  
+}
