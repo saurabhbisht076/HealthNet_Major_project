@@ -1,0 +1,51 @@
+.ctaSection {
+    padding: 4rem 1rem;
+    background-color: #1385d1;
+    color: #ffffff;
+    text-align: center;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .ctaContent {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .ctaTitle {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .ctaDescription {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .ctaButtons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .ctaPrimaryButton {
+    background-color: #ffffff;
+    color: #130606;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  
+  .ctaSecondaryButton {
+    background-color: transparent;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1rem;
+  }

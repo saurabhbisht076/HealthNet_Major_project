@@ -4,6 +4,7 @@ const axiosInstance = axios.create();
 const serverUrl = process.env.REACT_APP_SERVER || "http://localhost:5000";
 const baseUrl = `${serverUrl}/api`;
 
+
 axios.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");
@@ -59,6 +60,11 @@ axios.interceptors.response.use(
 );
 
 const api = {
+  getHospitals: (params) => {
+    return axios.get(`${baseUrl}/hospital_data`, { params });
+  },
+
+ 
   signup: (body) => {
     return axios.post(`${baseUrl}/auth/signup`, body);
   },
@@ -157,3 +163,12 @@ const api = {
 };
 
 export default api;
+
+
+
+
+
+
+
+
+

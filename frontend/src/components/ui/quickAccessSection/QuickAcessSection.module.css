@@ -1,0 +1,127 @@
+.quickAccess {
+    padding: 4rem 1rem;
+    background-color: #ffffff;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .sectionHeader {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .sectionBadge {
+    display: inline-block;
+    background-color: #0e58ad8d;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+  }
+  
+  .sectionDescription {
+    font-size: 1.1rem;
+    color: #555;
+  }
+  
+  .cardsContainer {
+    position: relative;
+  }
+  
+  .cardsScroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 1rem 0;
+  }
+  
+  .cardWrapper {
+    flex: 0 0 auto;
+    width: 300px;
+  }
+  
+  .card {
+    background-color: #f0f4f8;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .cardBgprimary-600 {
+    background-color: #524dae;
+    color: #ffffff;
+  }
+  
+  .cardBgprimary-500 {
+    background-color: #6a11cb;
+    color: #ffffff;
+  }
+  
+  .cardBgprimary-700 {
+    background-color: #2575fc;
+    color: #ffffff;
+  }
+  
+  .cardIcon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .cardTitle {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .cardDescription {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 1rem;
+  }
+  
+  .cardLink {
+    text-decoration: none;
+    color: #4caf50;
+    font-weight: bold;
+  }
+  
+  .viewAllContainer {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .viewAllLink {
+    text-decoration: none;
+    color: #4caf50;
+    font-weight: bold;
+  }
+  
+  .scrollButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1;
+  }
+  
+  .scrollButtonLeft {
+    left: -20px;
+  }
+  
+  .scrollButtonRight {
+    right: -20px;
+  }
