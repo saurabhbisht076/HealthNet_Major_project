@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import styles from "./Header.module.css";
+import styles from "./header.module.css";
 
-const Header = ({ openSignupModal }) => {
+const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
     document.body.style.overflow = isMobileMenuOpen ? "auto" : "hidden";
   };
-
+  
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
@@ -24,7 +24,7 @@ const Header = ({ openSignupModal }) => {
           <nav className={styles.desktopNav}>
             <div className={styles.navItem}>
               <button className={styles.navButton}>
-                Members <span className={styles.navArrow}>▼</span>
+                Members 
               </button>
               <div className={styles.dropdown}>
                 <Link to="#" className={styles.dropdownItem}>Overview</Link>
@@ -35,41 +35,31 @@ const Header = ({ openSignupModal }) => {
             </div>
             <div className={styles.navItem}>
               <button className={styles.navButton}>
-                Providers <span className={styles.navArrow}>▼</span>
+                Providers 
               </button>
             </div>
             <div className={styles.navItem}>
               <button className={styles.navButton}>
-                Employers <span className={styles.navArrow}>▼</span>
+                Employers 
               </button>
             </div>
             <div className={styles.navItem}>
               <button className={styles.navButton}>
-                Brokers <span className={styles.navArrow}>▼</span>
+                Brokers 
               </button>
             </div>
             <div className={styles.navItem}>
               <button className={styles.navButton}>
-                About Us <span className={styles.navArrow}>▼</span>
+                About Us 
               </button>
             </div>
           </nav>
 
           <div className={styles.headerActions}>
-            <Link to="/view-location" className={styles.emergencyButton}>
-              <span className={styles.emergencyIcon}>⚠️</span>
-              Emergency
-            </Link>
             <button className={styles.searchButton}>
               <span></span>
             </button>
-            <Link to="/signin" className={styles.signInButton}>
-              <span>👤</span>
-            </Link>
-            {/* Changed from Link to button with onClick handler */}
-            <button onClick={openSignupModal} className={styles.getStartedButton}>
-              Get Started
-            </button>
+            {/* Removed Sign In button */}
           </div>
 
           {/* Mobile Menu Button */}
@@ -96,14 +86,8 @@ const Header = ({ openSignupModal }) => {
             <Link to="#" className={styles.mobileNavItem}>About Us</Link>
           </nav>
           <div className={styles.mobileMenuActions}>
-            <Link to="/signin" className={styles.mobileSignInButton}>
-              <span>👤</span>
-              Sign In
-            </Link>
-            {/* Changed from Link to button with onClick handler */}
-            <button onClick={openSignupModal} className={styles.mobileGetStartedButton}>
-              Get Started
-            </button>
+            {/* Removed Sign In button */}
+            {/* Removed Get Started button */}
             <button className={styles.mobileSearchButton}>
               <span>🔍</span>
               Search

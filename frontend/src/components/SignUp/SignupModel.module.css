@@ -1,0 +1,163 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  width: 95%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slideIn 0.4s ease-out;
+  overflow: hidden;
+}
+
+.modalContent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, #3b82f6, #4f46e5);
+}
+
+.closeButton {
+  position: absolute !important;
+  top: 12px;
+  right: 12px;
+  color: #6b7280 !important;
+  transition: all 0.2s ease !important;
+}
+
+.closeButton:hover {
+  color: #1f2937 !important;
+  transform: rotate(90deg);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formHeader {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.avatar {
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #edf2f7, #e2e8f0);
+  padding: 8px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.title {
+  margin-top: 8px !important;
+  margin-bottom: 24px !important;
+  color: #2d3748;
+  font-weight: 700 !important;
+  font-size: 1.75rem !important;
+}
+
+.formField {
+  margin-bottom: 16px !important;
+  transition: transform 0.2s ease;
+}
+
+.formField:focus-within {
+  transform: translateY(-4px);
+}
+
+.nameContainer {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.nameInput {
+  margin-bottom: 0 !important;
+}
+
+.submitButton {
+  margin-top: 24px !important;
+  margin-bottom: 16px !important;
+  padding: 12px !important;
+  background: linear-gradient(90deg, #3b82f6, #4f46e5) !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3) !important;
+  transition: all 0.3s !important;
+}
+
+.submitButton:hover {
+  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+.linkBtn {
+  font-size: 0.9rem !important;
+  color: #3b82f6 !important;
+  text-transform: none !important;
+  transition: color 0.2s !important;
+}
+
+.linkBtn:hover {
+  color: #4f46e5 !important;
+  text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .nameContainer {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
