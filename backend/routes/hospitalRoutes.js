@@ -1,10 +1,11 @@
 import express from "express";
 import Hospital from "../models/Hospital.js";
+import auth from "../middlewares/index.js";  // Import auth middleware
 
 const router = express.Router();
 
 // Get hospitals within a given range
-router.get("/", async (req, res) => {
+router.get("/hospital_data", auth, async (req, res) => {  // Add auth middleware here
   try {
     const { lat, lng, range = 50 } = req.query; // Default range = 50km
 
@@ -15,7 +16,7 @@ router.get("/", async (req, res) => {
     const hospitals = await Hospital.find({
       location: {
         $geoWithin: {
-          $centerSphere: [[parseFloat(lng), parseFloat(lat)], range / 6378.1], // Convert km to radians
+          $centerSphere: [[parseFloat(lng), parseFloat(lat)], range / 6378.1],
         },
       },
     });
