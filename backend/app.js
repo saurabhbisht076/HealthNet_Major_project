@@ -23,8 +23,9 @@ app.use(express.static("public"));
 
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization']
 }));
 
 app.use(express.urlencoded({ extended: false }));
@@ -35,7 +36,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", api);
-app.use("/api/hospital_data", hospitalRoutes);
+//app.use("/api/hospital_data", hospitalRoutes);
 
 const port = process.env.PORT || 5000;
 

@@ -10,31 +10,40 @@ const { ACCESS_SECRET, REFRESH_SECRET } = process.env;
 
 const signup = async (req, res) => {
   try {
-    const foundEmail = await auth.findOne({ email: req.body.email });
+      const foundEmail = await auth.findOne({ email: req.body.email });
 
-    if (foundEmail) {
-      return res.status(400).json({
-        error: true,
-        errorMsg: "That email is already registered!",
+      if (foundEmail) {
+          return res.status(400).json({
+              error: true,
+              errorMsg: "That email is already registered!",
+          });
+      }
+
+      const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+
+      // Create the user with automatic verification for admin
+      const newUser = await auth.create({
+          ...req.body,
+          password: hashedPassword,
+          verified: req.body.userType === "Admin" // Ensure admin is verified on creation
       });
-    }
 
-    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-
-    await auth.create({
-      ...req.body,
-      password: hashedPassword,
-    });
-
-    return res.status(201).json({ error: false, msg: "Signup Successful!" });
+      return res.status(201).json({ 
+          error: false, 
+          msg: "Signup Successful!",
+          // Return additional info for testing
+          userType: newUser.userType,
+          verified: newUser.verified
+      });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ error: true, errorMsg: "Internal Server Error!" });
+      console.error(error);
+      return res.status(500).json({ 
+          error: true, 
+          errorMsg: "Internal Server Error!",
+          details: error.message 
+      });
   }
 };
-
 // ---------------------> SignIn <-------------------------------
 
 const signin = async (req, res) => {
@@ -83,35 +92,71 @@ const signin = async (req, res) => {
 };
 
 // ---------------------> Refresh Token <-------------------------------
-
 const generateRefreshToken = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+      const { refreshToken } = req.body;
 
-    if (!refreshToken) {
-      return res
-        .status(403)
-        .json({ error: true, errorMsg: "Access denied, token missing!" });
-    }
+      if (!refreshToken) {
+          return res.status(403).json({ 
+              error: true, 
+              errorMsg: "Access denied, token missing!" 
+          });
+      }
 
-    const storedToken = await token.findOne({ token: refreshToken });
+      // Find token in database
+      const storedToken = await token.findOne({ token: refreshToken });
 
-    if (!storedToken) {
-      return res.status(401).json({ error: true, errorMsg: "Token Expired!" });
-    }
+      if (!storedToken) {
+          return res.status(401).json({ 
+              error: true, 
+              errorMsg: "Token not found or expired!" 
+          });
+      }
 
-    const payload = jwt.verify(storedToken.token, REFRESH_SECRET);
-    const accessToken = jwt.sign(payload, ACCESS_SECRET);
+      // Verify token hasn't expired in database
+      if (storedToken.expires <= new Date()) {
+          await token.deleteOne({ _id: storedToken._id });
+          return res.status(401).json({ 
+              error: true, 
+              errorMsg: "Token expired!" 
+          });
+      }
 
-    return res.status(200).json({ accessToken });
+      try {
+          // Verify JWT
+          const payload = jwt.verify(refreshToken, REFRESH_SECRET);
+
+          // Find user
+          const user = await auth.findOne({ uid: payload.uid });
+          if (!user) {
+              throw new Error("User not found");
+          }
+
+          // Generate new access token
+          const accessToken = await user.createAccessToken();
+
+          return res.status(200).json({
+              error: false,
+              accessToken,
+              message: "Token refreshed successfully"
+          });
+
+      } catch (verifyError) {
+          // Clean up invalid token
+          await token.deleteOne({ _id: storedToken._id });
+          return res.status(401).json({ 
+              error: true, 
+              errorMsg: "Invalid token!" 
+          });
+      }
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ error: true, errorMsg: "Internal Server Error!" });
+      console.error("Refresh Token Error:", error);
+      return res.status(500).json({ 
+          error: true, 
+          errorMsg: "Internal Server Error!" 
+      });
   }
 };
-
 // ---------------------> LogOut <-------------------------------
 
 const logout = async (req, res) => {

@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import { Link} from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { 
-  Box, 
-  Avatar, 
-  Typography, 
-  TextField, 
-  Button, 
-  MenuItem, 
-  FormControl, 
-  InputLabel, 
-  Select,
-  IconButton,
-  Zoom,
-  Fade
+    Box, 
+    Avatar, 
+    Typography, 
+    TextField, 
+    Button, 
+    MenuItem, 
+    FormControl, 
+    InputLabel, 
+    Select,
+    IconButton,
+    Zoom,
+    Fade,
+    CircularProgress // Added for loading state
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -20,267 +22,307 @@ import styles from "./SignupModel.module.css";
 import { useAuth } from "../../AuthContext";
 import { useNavigate } from "react-router-dom";
 
-// API base URL - replace with your actual backend URL
-const API_URL = "http://localhost:5000/api"; // Adjust this to your backend URL
+// API Configuration
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+const axiosInstance = axios.create({
+    baseURL: API_URL,
+    timeout: 5000,
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
 
 const userRoles = ["Patient", "Staff", "Doctor", "Admin"];
 
+// Email validation regex
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
 export default function SignupModal({ onClose }) {
-  const { setLoader, setAlert, setAlertMsg, setAlertType } = useAuth();
-  const navigate = useNavigate();
+    const { setLoader, setAlert, setAlertMsg, setAlertType } = useAuth();
+    const navigate = useNavigate();
 
-  const [user, setUser] = useState("Patient");
-  const [department, setDepartment] = useState("");
-  const [speciality, setSpeciality] = useState("");
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+    // Form states
+    const [formData, setFormData] = useState({
+        user: "Patient",
+        department: "",
+        speciality: "",
+        fname: "",
+        lname: "",
+        email: "",
+        password: ""
+    });
 
-  const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [animationComplete, setAnimationComplete] = useState(false);
 
-  // Animation states for fields
-  const [animationComplete, setAnimationComplete] = useState(false);
+    useEffect(() => {
+        setTimeout(() => setAnimationComplete(true), 300);
+    }, []);
 
-  React.useEffect(() => {
-    // Trigger animation after component mounts
-    setTimeout(() => setAnimationComplete(true), 300);
-  }, []);
-
-  // **🔹 Form Validation**
-  const validateForm = () => {
-    let tempErrors = {};
-    
-    if (!fname.trim()) tempErrors.fname = "First name is required!";
-    if (!lname.trim()) tempErrors.lname = "Last name is required!";
-    if (!email.match(/^\S+@\S+\.\S+$/)) tempErrors.email = "Enter a valid email!";
-    if (password.length < 6) tempErrors.password = "Password must be at least 6 characters!";
-    
-    if (user === "Doctor") {
-      if (!department.trim()) tempErrors.department = "Department is required!";
-      if (!speciality.trim()) tempErrors.speciality = "Speciality is required!";
-    }
-
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
-  };
-
-  // **🔹 Form Submission Handler**
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!validateForm()) return;
-
-    const postData = {
-      userType: user,
-      fname,
-      lname,
-      department,
-      speciality,
-      email,
-      password,
+    // Handle form input changes
+    const handleInputChange = (field) => (event) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: event.target.value
+        }));
+        // Clear error when user starts typing
+        if (errors[field]) {
+            setErrors(prev => ({
+                ...prev,
+                [field]: null
+            }));
+        }
     };
 
-    try {
-      setLoader(true);
-      setIsLoading(true);
-      // Direct axios call instead of using the undefined api object
-      const res = await axios.post(`${API_URL}/signup`, postData);
+    // Form validation
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!formData.fname.trim()) newErrors.fname = "First name is required";
+        if (!formData.lname.trim()) newErrors.lname = "Last name is required";
+        if (!EMAIL_REGEX.test(formData.email)) newErrors.email = "Enter a valid email";
+        if (formData.password.length < 6) newErrors.password = "Password must be at least 6 characters";
+        
+        if (formData.user === "Doctor") {
+            if (!formData.department.trim()) newErrors.department = "Department is required";
+            if (!formData.speciality.trim()) newErrors.speciality = "Speciality is required";
+        }
 
-      if (res.data.error) {
-        setLoader(false);
-        setIsLoading(false);
-        setAlertMsg(res.data.errorMsg);
-        setAlertType("error");
-        setAlert(true);
-      } else {
-        setLoader(false);
-        setIsLoading(false);
-        setUser("Patient");
-        setDepartment("");
-        setSpeciality("");
-        setFname("");
-        setLname("");
-        setEmail("");
-        setPassword("");
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-        setAlertMsg(res.data.msg);
-        setAlertType("success");
-        setAlert(true);
+    // Form submission handler
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-        onClose(); // Close the modal
-        navigate("/signin");
-      }
-    } catch (error) {
-      setLoader(false);
-      setIsLoading(false);
-      setAlertMsg(error.response?.data?.errorMsg || "An error occurred!");
-      setAlertType("error");
-      setAlert(true);
-      console.error(error);
-    }
-  };
+        if (!validateForm()) return;
 
-  // Handle signin link click
-  const handleSignInClick = () => {
-    onClose(); // Close the modal
-    navigate("/signin");
-  };
+        const postData = {
+            userType: formData.user,
+            fname: formData.fname.trim(),
+            lname: formData.lname.trim(),
+            email: formData.email.trim().toLowerCase(),
+            password: formData.password,
+            ...(formData.user === "Doctor" && {
+                department: formData.department.trim(),
+                speciality: formData.speciality.trim()
+            })
+        };
 
-  return (
-    <Fade in={true} timeout={300}>
-      <div className={styles.modalOverlay}>
-        <div className={styles.modalContent}>
-          <IconButton 
-            className={styles.closeButton}
-            onClick={onClose}
-            aria-label="close"
-          >
-            <CloseIcon />
-          </IconButton>
-          
-          <Box component="form" className={styles.form} onSubmit={handleSubmit}>
-            <Box className={styles.formHeader}>
-              <Zoom in={true} style={{ transitionDelay: '150ms' }}>
-                <Avatar 
-                  className={styles.avatar} 
-                  sx={{ width: 80, height: 80, bgcolor: '#e6f0fd' }}
-                >
-                  <FavoriteIcon color="error" sx={{ fontSize: 40 }} />
-                </Avatar>
-              </Zoom>
-              <Typography className={styles.title} component="h1" variant="h5">
-                Sign Up
-              </Typography>
-            </Box>
+        try {
+            setIsLoading(true);
+            setLoader(true);
 
-            {/* 🔹 User Type Dropdown */}
-            <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '200ms' }}>
-              <FormControl fullWidth className={styles.formField}>
-                <InputLabel>User Type</InputLabel>
-                <Select value={user} onChange={(e) => setUser(e.target.value)} label="User Type">
-                  {userRoles.map((role) => (
-                    <MenuItem key={role} value={role}>{role}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Fade>
+            // Using the correct endpoint /auth/signup
+            const response = await axiosInstance.post('/auth/signup', postData);
 
-            {/* 🔹 Conditional Fields for Doctor */}
-            {user === "Doctor" && (
-              <Fade in={true} timeout={400}>
-                <Box>
-                  <TextField
-                    name="department"
-                    fullWidth
-                    className={styles.formField}
-                    id="department"
-                    label="Department"
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    error={!!errors.department}
-                    helperText={errors.department}
-                  />
-                  <TextField
-                    name="speciality"
-                    fullWidth
-                    className={styles.formField}
-                    id="speciality"
-                    label="Speciality"
-                    value={speciality}
-                    onChange={(e) => setSpeciality(e.target.value)}
-                    error={!!errors.speciality}
-                    helperText={errors.speciality}
-                  />
-                </Box>
-              </Fade>
-            )}
+            if (response.data.error) {
+                setAlertMsg(response.data.errorMsg);
+                setAlertType("error");
+                setAlert(true);
+            } else {
+                setAlertMsg(response.data.msg || "Signup Successful!");
+                setAlertType("success");
+                setAlert(true);
 
-            {/* 🔹 Name Fields */}
-            <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '300ms' }}>
-              <Box component="div" className={styles.nameContainer}>
-                <TextField
-                  className={`${styles.nameInput} ${styles.formField}`}
-                  name="firstName"
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  value={fname}
-                  onChange={(e) => setFname(e.target.value)}
-                  error={!!errors.fname}
-                  helperText={errors.fname}
-                />
-                <TextField
-                  className={`${styles.nameInput} ${styles.formField}`}
-                  name="lastName"
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  value={lname}
-                  onChange={(e) => setLname(e.target.value)}
-                  error={!!errors.lname}
-                  helperText={errors.lname}
-                />
-              </Box>
-            </Fade>
+                // Reset form
+                setFormData({
+                    user: "Patient",
+                    department: "",
+                    speciality: "",
+                    fname: "",
+                    lname: "",
+                    email: "",
+                    password: ""
+                });
 
-            {/* 🔹 Email Field */}
-            <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '400ms' }}>
-              <TextField
-                margin="normal"
-                fullWidth
-                className={styles.formField}
-                id="email"
-                type="email"
-                label="Email Address"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                error={!!errors.email}
-                helperText={errors.email}
-              />
-            </Fade>
+                onClose(); // Close the modal
+                setTimeout(() => {
+                    navigate("/signin");
+                }, 1500);
+            }
+        } catch (error) {
+            console.error("Signup error:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
 
-            {/* 🔹 Password Field */}
-            <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '500ms' }}>
-              <TextField
-                margin="normal"
-                fullWidth
-                className={styles.formField}
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                error={!!errors.password}
-                helperText={errors.password}
-              />
-            </Fade>
+            // Handle specific error cases
+            if (error.response?.status === 409) {
+                setAlertMsg("This email is already registered");
+            } else {
+                setAlertMsg(error.response?.data?.errorMsg || "An error occurred during signup!");
+            }
+            setAlertType("error");
+            setAlert(true);
+        } finally {
+            setLoader(false);
+            setIsLoading(false);
+        }
+    };
 
-            {/* 🔹 Submit Button */}
-            <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '600ms' }}>
-              <Button 
-                type="submit" 
-                fullWidth 
-                disabled={isLoading}
-                variant="contained" 
-                className={styles.submitButton}
-              >
-                {isLoading ? "Processing..." : "Sign Up"}
-              </Button>
-            </Fade>
+    return (
+        <Fade in={true} timeout={300}>
+            <div className={styles.modalOverlay}>
+                <div className={styles.modalContent}>
+                    <IconButton 
+                        className={styles.closeButton}
+                        onClick={onClose}
+                        aria-label="close"
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                    
+                    <Box component="form" className={styles.form} onSubmit={handleSubmit}>
+                        <Box className={styles.formHeader}>
+                            <Zoom in={true} style={{ transitionDelay: '150ms' }}>
+                                <Avatar 
+                                    className={styles.avatar} 
+                                    sx={{ width: 80, height: 80, bgcolor: '#e6f0fd' }}
+                                >
+                                    <FavoriteIcon color="error" sx={{ fontSize: 40 }} />
+                                </Avatar>
+                            </Zoom>
+                            <Typography className={styles.title} component="h1" variant="h5">
+                                Sign Up
+                            </Typography>
+                        </Box>
 
-            {/* 🔹 Redirect to Sign In */}
-            <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '700ms' }}>
-              <Button onClick={handleSignInClick} className={styles.linkBtn}>
-                {"Already have an account? Sign In"}
-              </Button>
-            </Fade>
-          </Box>
-        </div>
-      </div>
-    </Fade>
-  );
-}
+                        {/* User Type Dropdown */}
+                        <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '200ms' }}>
+                            <FormControl fullWidth className={styles.formField}>
+                                <InputLabel>User Type</InputLabel>
+                                <Select
+                                    value={formData.user}
+                                    onChange={handleInputChange('user')}
+                                    label="User Type"
+                                >
+                                    {userRoles.map((role) => (
+                                        <MenuItem key={role} value={role}>{role}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Fade>
+
+                        {/* Doctor Fields */}
+                        {formData.user === "Doctor" && (
+                            <Fade in={true} timeout={400}>
+                                <Box>
+                                    <TextField
+                                        name="department"
+                                        fullWidth
+                                        className={styles.formField}
+                                        label="Department"
+                                        value={formData.department}
+                                        onChange={handleInputChange('department')}
+                                        error={!!errors.department}
+                                        helperText={errors.department}
+                                    />
+                                    <TextField
+                                        name="speciality"
+                                        fullWidth
+                                        className={styles.formField}
+                                        label="Speciality"
+                                        value={formData.speciality}
+                                        onChange={handleInputChange('speciality')}
+                                        error={!!errors.speciality}
+                                        helperText={errors.speciality}
+                                    />
+                                </Box>
+                            </Fade>
+                        )}
+
+                        {/* Name Fields */}
+                        <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '300ms' }}>
+                            <Box className={styles.nameContainer}>
+                                <TextField
+                                    className={`${styles.nameInput} ${styles.formField}`}
+                                    name="firstName"
+                                    required
+                                    label="First Name"
+                                    value={formData.fname}
+                                    onChange={handleInputChange('fname')}
+                                    error={!!errors.fname}
+                                    helperText={errors.fname}
+                                />
+                                <TextField
+                                    className={`${styles.nameInput} ${styles.formField}`}
+                                    name="lastName"
+                                    required
+                                    label="Last Name"
+                                    value={formData.lname}
+                                    onChange={handleInputChange('lname')}
+                                    error={!!errors.lname}
+                                    helperText={errors.lname}
+                                />
+                            </Box>
+                        </Fade>
+
+                        {/* Email Field */}
+                        <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '400ms' }}>
+                            <TextField
+                                required
+                                fullWidth
+                                className={styles.formField}
+                                type="email"
+                                label="Email Address"
+                                value={formData.email}
+                                onChange={handleInputChange('email')}
+                                error={!!errors.email}
+                                helperText={errors.email}
+                            />
+                        </Fade>
+
+                        {/* Password Field */}
+                        <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '500ms' }}>
+                            <TextField
+                                required
+                                fullWidth
+                                className={styles.formField}
+                                type="password"
+                                label="Password"
+                                value={formData.password}
+                                onChange={handleInputChange('password')}
+                                error={!!errors.password}
+                                helperText={errors.password}
+                            />
+                        </Fade>
+
+                        {/* Submit Button */}
+                        <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '600ms' }}>
+                            <Button 
+                                type="submit" 
+                                fullWidth 
+                                variant="contained" 
+                                className={styles.submitButton}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <CircularProgress size={24} color="inherit" />
+                                ) : (
+                                    "Sign Up"
+                                )}
+                            </Button>
+                        </Fade>
+
+                        {/* Sign In Link */}
+                        <Fade in={animationComplete} timeout={500} style={{ transitionDelay: '700ms' }}>
+                            <Link 
+                                to="/signin" 
+                                className={styles.linkBtn}
+                                onClick={onClose} // Close modal when clicking the link
+                            >
+                                <Button className={styles.linkBtn}>
+                                    Already have an account? Sign In
+                                </Button>
+                            </Link>
+                        </Fade>
+                    </Box>
+                </div>
+            </div>
+        </Fade>
+    );
+  }
