@@ -1,132 +1,302 @@
+/* heroSection.module.css */
+
 .hero {
-    position: relative;
-    background-color: #f0f4f8;
-    padding: 4rem 1rem;
-    overflow: hidden;
+  background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 50%, #90cdf4 100%);
+  padding: 6rem 1rem;
+  position: relative;
+  overflow: hidden;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.floatingCircles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.circle {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  animation: float 20s infinite linear;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) translateX(-10vw);
+    opacity: 0;
   }
-  
-  .heroGradient {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    opacity: 0.1;
+  100% {
+    transform: translateY(-100vh) translateX(10vw);
+    opacity: 1;
   }
-  
-  .heroShape1 {
-    position: absolute;
-    top: -50px;
-    left: -50px;
-    width: 200px;
-    height: 200px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
+}
+
+.circle:nth-child(1) {
+  width: 120px;
+  height: 120px;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.circle:nth-child(2) {
+  width: 80px;
+  height: 80px;
+  left: 30%;
+  animation-delay: 4s;
+}
+
+.circle:nth-child(3) {
+  width: 150px;
+  height: 150px;
+  left: 50%;
+  animation-delay: 8s;
+}
+
+.circle:nth-child(4) {
+  width: 100px;
+  height: 100px;
+  left: 70%;
+  animation-delay: 12s;
+}
+
+.circle:nth-child(5) {
+  width: 60px;
+  height: 60px;
+  left: 90%;
+  animation-delay: 16s;
+}
+
+.heroContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  background: linear-gradient(45deg, #2b6cb0, #3182ce, #63b3ed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  line-height: 1.2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cursor {
+  display: inline-block;
+  color: #2b6cb0;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
-  
-  .heroShape2 {
-    position: absolute;
-    bottom: -50px;
-    right: -50px;
-    width: 200px;
-    height: 200px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-  }
-  
-  .heroContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-  
-  .heroContent {
-    text-align: center;
-  }
-  
-  .heroBadge {
-    display: inline-block;
-    background-color: #4caf50;
-    color: #ffffff;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-  
+}
+
+.heroDescription {
+  font-size: 1.25rem;
+  color: #4a5568;
+  margin-bottom: 2.5rem;
+  max-width: 700px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.searchForm {
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 2.5rem;
+}
+
+.searchInputContainer {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.searchInputContainer:focus-within {
+  border-color: #3182ce;
+  box-shadow: 0 4px 20px rgba(49, 130, 206, 0.2);
+}
+
+.searchIcon {
+  font-size: 1.25rem;
+  color: #a0aec0;
+  margin: 0 1rem;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 1rem;
+  font-size: 1.1rem;
+  color: #2d3748;
+  background: transparent;
+}
+
+.searchButton {
+  background: linear-gradient(45deg, #3182ce, #63b3ed);
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.searchButton:hover {
+  background: linear-gradient(45deg, #2b6cb0, #4299e1);
+  transform: translateY(-1px);
+}
+
+.heroButtons {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.primaryButton {
+  background: linear-gradient(45deg, #3182ce, #63b3ed);
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+  border: none;
+}
+
+.primaryButton:hover {
+  background: linear-gradient(45deg, #2b6cb0, #4299e1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+}
+
+.emergencyButton {
+  background: linear-gradient(45deg, #e53e3e, #fc8181);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+  border: none;
+}
+
+.emergencyButton:hover {
+  background: linear-gradient(45deg, #c53030, #f56565);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+}
+
+.emergencyLink {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.btnIcon {
+  color: white;
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .heroTitle {
-    font-size: 2.5rem;
-    color: #2c3e50;
-    margin-bottom: 1rem;
+    font-size: 2rem;
+    padding: 0 1rem;
   }
-  
+
   .heroDescription {
-    font-size: 1.2rem;
-    color: #555;
-    margin-bottom: 2rem;
+    font-size: 1rem;
+    padding: 0 1rem;
   }
-  
-  .searchForm {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .searchInputContainer {
-    display: flex;
-    align-items: center;
-    background-color: #ffffff;
-    border-radius: 4px;
-    padding: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .searchIcon {
-    font-size: 1.2rem;
-    color: #555;
-    margin-right: 0.5rem;
-  }
-  
+
   .searchInput {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
-  
+
   .searchButton {
-    background-color: #2446ae;
-    color: #ffffff;
-    border: none;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
   }
-  
-  .heroButtons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  
-  .primaryButton {
-    background-color: #1385d1;
-    color: #ffffff;
-    border: none;
+
+  .primaryButton,
+  .emergencyButton {
     padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
-  
-  .outlineButton {
-    background-color: transparent;
-    color: #1385d1;
-    border: 2px solid #1385d1;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 4rem 1rem;
   }
+
+  .searchInputContainer {
+    flex-direction: column;
+    background: transparent;
+    box-shadow: none;
+    gap: 0.5rem;
+  }
+
+  .searchInput {
+    width: 100%;
+    border-radius: 2rem;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+  }
+
+  .searchButton {
+    width: 100%;
+    border-radius: 2rem;
+  }
+}
