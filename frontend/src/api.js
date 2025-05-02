@@ -59,6 +59,9 @@ axios.interceptors.response.use(
 );
 
 const api = {
+  getHospitals: (params) => {
+    return axios.get(`${baseUrl}/hospital_data`, { params });
+  },
   signup: (body) => {
     return axios.post(`${baseUrl}/auth/signup`, body);
   },
