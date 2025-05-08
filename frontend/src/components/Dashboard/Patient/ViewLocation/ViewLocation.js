@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
-import axios from "axios";
+import apiEndpoints from "../../../../api"; // Using your API service instead of direct axios call
+
 import styles from "./ViewLocation.module.css";
 
 export default function ViewLocation() {
@@ -12,67 +13,94 @@ export default function ViewLocation() {
   const [showNearest, setShowNearest] = useState(false);
   const [sortBy, setSortBy] = useState("weighted"); // Default sorting by weighted score
   const [selectedHospital, setSelectedHospital] = useState(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const mapRef = useRef(null);
-  const { isLoaded } = useJsApiLoader({
+  
+  // Make sure you have the API key in your .env file
+  const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
   });
 
   // Function to zoom to fit all markers (hospitals + user location)
   const zoomToFitAllMarkers = useCallback((hospitalsArray) => {
-    if (!mapRef.current || !userLocation) return;
+    if (!mapRef.current || !userLocation || !window.google || hospitalsArray.length === 0) return;
 
-    const bounds = new window.google.maps.LatLngBounds();
+    try {
+      const bounds = new window.google.maps.LatLngBounds();
 
-    // Add user location to bounds
-    bounds.extend(userLocation);
+      // Add user location to bounds
+      bounds.extend(userLocation);
 
-    // Add all hospital locations to bounds
-    hospitalsArray.forEach(hospital => {
-      const hospitalPos = {
-        lat: hospital.location.coordinates[1],
-        lng: hospital.location.coordinates[0]
-      };
-      bounds.extend(hospitalPos);
-    });
-
-    // Apply smooth transition
-    mapRef.current.panTo(bounds.getCenter());
-    setTimeout(() => {
-      mapRef.current.fitBounds(bounds, {
-        padding: { top: 50, right: 50, bottom: 50, left: 50 }
+      // Add all hospital locations to bounds
+      hospitalsArray.forEach(hospital => {
+        if (hospital.location && Array.isArray(hospital.location.coordinates) && hospital.location.coordinates.length === 2) {
+          const hospitalPos = {
+            lat: hospital.location.coordinates[1],
+            lng: hospital.location.coordinates[0]
+          };
+          bounds.extend(hospitalPos);
+        }
       });
-    }, 200);
+
+      // Check if bounds has any points before applying
+      if (bounds.isEmpty()) {
+        console.warn("No valid locations to fit bounds");
+        return;
+      }
+
+      // Apply smooth transition
+      mapRef.current.panTo(bounds.getCenter());
+      setTimeout(() => {
+        mapRef.current.fitBounds(bounds, {
+          padding: { top: 50, right: 50, bottom: 50, left: 50 }
+        });
+      }, 200);
+    } catch (error) {
+      console.error("Error in zoomToFitAllMarkers:", error);
+    }
   }, [mapRef, userLocation]);
 
   // Function to smoothly zoom to fit a route between two points
   const smoothZoomToFitRoute = useCallback((origin, destination) => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || !window.google) return;
 
-    const bounds = new window.google.maps.LatLngBounds();
-    bounds.extend(origin);
-    bounds.extend(destination);
+    try {
+      const bounds = new window.google.maps.LatLngBounds();
+      bounds.extend(origin);
+      bounds.extend(destination);
 
-    // First pan to the center of the bounds
-    mapRef.current.panTo(bounds.getCenter());
+      // First pan to the center of the bounds
+      mapRef.current.panTo(bounds.getCenter());
 
-    // Then smoothly zoom to fit the bounds
-    setTimeout(() => {
-      mapRef.current.fitBounds(bounds, {
-        padding: { top: 100, right: 100, bottom: 100, left: 100 }
-      });
-    }, 200);
+      // Then smoothly zoom to fit the bounds
+      setTimeout(() => {
+        mapRef.current.fitBounds(bounds, {
+          padding: { top: 100, right: 100, bottom: 100, left: 100 }
+        });
+      }, 200);
+    } catch (error) {
+      console.error("Error in smoothZoomToFitRoute:", error);
+    }
   }, [mapRef]);
 
   // Fetch user's location
   useEffect(() => {
+    console.log("Trying to get user location...");
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log("User location obtained:", position.coords);
           const { latitude, longitude } = position.coords;
           setUserLocation({ lat: latitude, lng: longitude });
         },
-        () => {
-          setError("Unable to retrieve your location.");
+        (err) => {
+          console.error("Geolocation error:", err);
+          setError(`Unable to retrieve your location: ${err.message}`);
+        },
+        { 
+          enableHighAccuracy: true, 
+          timeout: 10000, 
+          maximumAge: 0 
         }
       );
     } else {
@@ -82,19 +110,33 @@ export default function ViewLocation() {
 
   // Fetch hospitals from backend
   useEffect(() => {
-    if (!userLocation) return;
+    if (!userLocation) {
+      console.log("No user location yet, waiting...");
+      return;
+    }
 
     const fetchHospitals = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/hospital_data", {
-          params: {
-            lat: userLocation.lat,
-            lng: userLocation.lng,
-            range: range,
-          },
+        console.log("Fetching hospitals with params:", {
+          lat: userLocation.lat,
+          lng: userLocation.lng,
+          range: range,
+        });
+        
+        // Using the API service instead of direct axios call
+        const response = await apiEndpoints.getHospitals({
+          lat: userLocation.lat,
+          lng: userLocation.lng,
+          range: range,
         });
 
         console.log("Fetched hospitals:", response.data);
+
+        if (!response.data || response.data.length === 0) {
+          console.log("No hospitals found in the specified range");
+          setHospitals([]);
+          return;
+        }
 
         // Calculate distance for each hospital and add weighted score
         const hospitalsWithScores = response.data.map(hospital => {
@@ -115,20 +157,23 @@ export default function ViewLocation() {
         setSelectedHospital(null);
 
         // If the map is loaded, adjust the view to show all hospitals
-        if (mapRef.current && !showNearest) {
+        if (mapRef.current && !showNearest && mapLoaded) {
           zoomToFitAllMarkers(sortedHospitals);
         }
       } catch (error) {
         console.error("Error fetching hospitals:", error);
+        setError(`Error fetching hospitals: ${error.message}`);
       }
     };
 
     fetchHospitals();
-  }, [userLocation, range, sortBy, zoomToFitAllMarkers, showNearest, mapRef]);
+  }, [userLocation, range, sortBy, zoomToFitAllMarkers, showNearest, mapRef, mapLoaded]);
 
   // Calculate directions when a hospital is selected or when showNearest changes
   useEffect(() => {
-    if (!userLocation || !isLoaded || !mapRef.current) return;
+    if (!userLocation || !isLoaded || !mapRef.current || !window.google) return;
+
+    console.log("Calculating directions, showNearest:", showNearest, "selectedHospital:", selectedHospital ? selectedHospital.name : "none");
 
     // Clear existing directions if not showing any routes
     if (!showNearest && !selectedHospital) {
@@ -173,27 +218,32 @@ export default function ViewLocation() {
     smoothZoomToFitRoute(userLocation, hospitalLocation);
 
     // Calculate directions
-    const directionsService = new window.google.maps.DirectionsService();
-    directionsService.route(
-      {
-        origin: userLocation,
-        destination: hospitalLocation,
-        travelMode: window.google.maps.TravelMode.DRIVING,
-      },
-      (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
-          console.log("Directions found successfully");
-          setDirections(result);
-        } else {
-          console.error("Directions request failed:", status);
-          setDirections(null);
+    try {
+      const directionsService = new window.google.maps.DirectionsService();
+      directionsService.route(
+        {
+          origin: userLocation,
+          destination: hospitalLocation,
+          travelMode: window.google.maps.TravelMode.DRIVING,
+        },
+        (result, status) => {
+          if (status === window.google.maps.DirectionsStatus.OK) {
+            console.log("Directions found successfully");
+            setDirections(result);
+          } else {
+            console.error("Directions request failed:", status);
+            setDirections(null);
+          }
         }
-      }
-    );
+      );
+    } catch (error) {
+      console.error("Error calculating directions:", error);
+    }
   }, [userLocation, selectedHospital, showNearest, hospitals, range, isLoaded, smoothZoomToFitRoute, zoomToFitAllMarkers]);
 
   // Handle hospital selection
   const handleHospitalSelect = (hospital) => {
+    console.log("Hospital selected:", hospital.name);
     setSelectedHospital(hospital);
     // Automatically switch to showing route when a hospital is selected
     setShowNearest(true);
@@ -202,6 +252,7 @@ export default function ViewLocation() {
   // Toggle between showing all hospitals or best route
   const toggleShowNearest = () => {
     const newShowNearest = !showNearest;
+    console.log("Toggling show nearest:", newShowNearest);
     setShowNearest(newShowNearest);
 
     // Reset selected hospital when toggling off routes
@@ -248,55 +299,70 @@ export default function ViewLocation() {
 
   // Utility: Haversine Distance Calculation
   function haversineDistance(coord1, hospital) {
-    const toRad = (angle) => (angle * Math.PI) / 180;
-    const R = 6371; // Earth's radius in km
+    try {
+      const toRad = (angle) => (angle * Math.PI) / 180;
+      const R = 6371; // Earth's radius in km
 
-    const lat2 = hospital.location.coordinates[1];
-    const lng2 = hospital.location.coordinates[0];
+      if (!hospital.location || !Array.isArray(hospital.location.coordinates) || hospital.location.coordinates.length !== 2) {
+        console.error("Invalid hospital location:", hospital);
+        return 99999; // Return a large distance for invalid locations
+      }
 
-    const dLat = toRad(lat2 - coord1.lat);
-    const dLng = toRad(lng2 - coord1.lng);
+      const lat2 = hospital.location.coordinates[1];
+      const lng2 = hospital.location.coordinates[0];
 
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(coord1.lat)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
+      if (isNaN(lat2) || isNaN(lng2)) {
+        console.error("Invalid coordinates:", lat2, lng2);
+        return 99999;
+      }
 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
+      const dLat = toRad(lat2 - coord1.lat);
+      const dLng = toRad(lng2 - coord1.lng);
+
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(coord1.lat)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c; // Distance in km
+    } catch (error) {
+      console.error("Error calculating distance:", error);
+      return 99999;
+    }
   }
 
   // Create a custom green location marker icon for hospitals
-  const hospitalMarkerIcon = {
-    // SVG data URI for the green location pin as seen in the image
+  const hospitalMarkerIcon = isLoaded ? {
     url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="30" height="40">
         <path fill="#2ecc40" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/>
       </svg>
     `),
-    scaledSize: isLoaded ? new window.google.maps.Size(30, 40) : null,
-    anchor: isLoaded ? new window.google.maps.Point(15, 40) : null, // Anchor at the bottom tip of the pin
-    labelOrigin: isLoaded ? new window.google.maps.Point(15, 12) : null, // Position for the label
-  };
+    scaledSize: new window.google.maps.Size(30, 40),
+    anchor: new window.google.maps.Point(15, 40), // Anchor at the bottom tip of the pin
+    labelOrigin: new window.google.maps.Point(15, 12), // Position for the label
+  } : null;
 
   // Selected hospital marker icon (slightly larger)
-  const selectedHospitalMarkerIcon = {
-    // Same SVG but larger size
+  const selectedHospitalMarkerIcon = isLoaded ? {
     url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="36" height="48">
         <path fill="#2ecc40" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/>
       </svg>
     `),
-    scaledSize: isLoaded ? new window.google.maps.Size(36, 48) : null,
-    anchor: isLoaded ? new window.google.maps.Point(18, 48) : null,
-    labelOrigin: isLoaded ? new window.google.maps.Point(18, 12) : null,
-  };
+    scaledSize: new window.google.maps.Size(36, 48),
+    anchor: new window.google.maps.Point(18, 48),
+    labelOrigin: new window.google.maps.Point(18, 12),
+  } : null;
 
   // Function to handle map load and store the map reference
   const onMapLoad = (map) => {
+    console.log("Map loaded");
     mapRef.current = map;
+    setMapLoaded(true);
     // Initial zoom to fit all markers if we have user location and hospitals
     if (userLocation && hospitals.length > 0) {
       zoomToFitAllMarkers(hospitals);
@@ -311,6 +377,11 @@ export default function ViewLocation() {
     if (value === '') value = '0';
     setRange(Number(value));
   };
+
+  // If there's a Google Maps API loading error
+  if (loadError) {
+    return <div className={styles.error}>Error loading Google Maps: {loadError.message}</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -350,125 +421,126 @@ export default function ViewLocation() {
         {error ? (
           <p className={styles.error}>{error}</p>
         ) : !userLocation ? (
-          <p>Fetching your location...</p>
+          <p>Fetching your location... Please ensure location services are enabled in your browser.</p>
+        ) : !isLoaded ? (
+          <p>Loading Google Maps...</p>
         ) : (
-          isLoaded && (
-            <div className={styles.mapSection}>
-              <GoogleMap
-                center={userLocation}
-                zoom={12}
-                mapContainerClassName={styles.mapContainer}
-                options={{
-                  fullscreenControl: true,
-                  mapTypeControl: true,
-                  streetViewControl: true,
-                  zoomControl: true,
-                  gestureHandling: "cooperative" // Improves zooming interaction
-                }}
-                onLoad={onMapLoad}
-              >
-                {/* User Location Marker */}
+          <div className={styles.mapSection}>
+            <GoogleMap
+              center={userLocation}
+              zoom={12}
+              mapContainerClassName={styles.mapContainer}
+              options={{
+                fullscreenControl: true,
+                mapTypeControl: true,
+                streetViewControl: true,
+                zoomControl: true,
+                gestureHandling: "cooperative" // Improves zooming interaction
+              }}
+              onLoad={onMapLoad}
+            >
+              {/* User Location Marker */}
+              {userLocation && (
                 <Marker
                   position={userLocation}
                   icon={{
                     url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-                    scaledSize: isLoaded ? new window.google.maps.Size(40, 40) : null
+                    scaledSize: new window.google.maps.Size(40, 40)
                   }}
                   title="Your Location"
                 />
+              )}
 
-                {/* Hospital Markers - only show if not showing directions */}
-                {!showNearest &&
-                  hospitals.map((hospital, index) => (
-                    <Marker
-                      key={index}
-                      position={{
-                        lat: hospital.location.coordinates[1],
-                        lng: hospital.location.coordinates[0],
-                      }}
-                      icon={selectedHospital && selectedHospital._id === hospital._id ?
-                        selectedHospitalMarkerIcon : hospitalMarkerIcon}
-                      title={hospital.name}
-                      onClick={() => handleHospitalSelect(hospital)}
-                      options={{
-                        optimized: false // To ensure hover tooltips appear properly
-                      }}
-                    />
-                  ))}
+              {/* Hospital Markers - only show if not showing directions */}
+              {!showNearest &&
+                hospitals.map((hospital, index) => (
+                  <Marker
+                    key={index}
+                    position={{
+                      lat: hospital.location.coordinates[1],
+                      lng: hospital.location.coordinates[0],
+                    }}
+                    icon={selectedHospital && selectedHospital._id === hospital._id ?
+                      selectedHospitalMarkerIcon : hospitalMarkerIcon}
+                    title={hospital.name}
+                    onClick={() => handleHospitalSelect(hospital)}
+                    options={{
+                      optimized: false // To ensure hover tooltips appear properly
+                    }}
+                  />
+                ))}
 
-                {/* Direction renderer for hospital route */}
-                {directions && <DirectionsRenderer directions={directions} />}
-              </GoogleMap>
+              {/* Direction renderer for hospital route */}
+              {directions && <DirectionsRenderer directions={directions} />}
+            </GoogleMap>
 
-              <div className={styles.hospitalList}>
-                <h3>Hospitals {sortBy === "weighted" ? "(Sorted by Best Match)" : ""}</h3>
-                {showNearest && hospitals.length > 0 && !selectedHospital && (
-                  <div className={styles.bestHospital}>
-                    <h4>Best Hospital Based on Your Criteria:</h4>
-                    <div className={`${styles.hospitalItem} ${styles.bestMatch}`}>
-                      <div className={styles.hospitalName}>{hospitals[0].name}</div>
-                      <div className={styles.hospitalDetails}>
-                        <span>Rating: {hospitals[0].rating}/5</span>
-                        <span>Facilities: {hospitals[0].facilitiesScore}/5</span>
-                        <span>Doctors: {(hospitals[0].doctorsAvailability * 100).toFixed(0)}%</span>
-                        <span>Distance: {hospitals[0].distance.toFixed(1)} km</span>
-                        <span className={styles.hospitalScore}>
-                          Score: {(hospitals[0].weightedScore * 100).toFixed(1)}%
-                        </span>
-                      </div>
+            <div className={styles.hospitalList}>
+              <h3>Hospitals {sortBy === "weighted" ? "(Sorted by Best Match)" : ""}</h3>
+              
+              {hospitals.length === 0 && (
+                <p>No hospitals found within the selected range. Try increasing the range.</p>
+              )}
+              
+              {showNearest && hospitals.length > 0 && !selectedHospital && (
+                <div className={styles.bestHospital}>
+                  <h4>Best Hospital Based on Your Criteria:</h4>
+                  <div className={`${styles.hospitalItem} ${styles.bestMatch}`}>
+                    <div className={styles.hospitalName}>{hospitals[0].name}</div>
+                    <div className={styles.hospitalDetails}>
+                      <span>Rating: {hospitals[0].rating}/5</span>
+                      <span>Facilities: {hospitals[0].facilitiesScore}/5</span>
+                      <span>Doctors: {(hospitals[0].doctorsAvailability * 100).toFixed(0)}%</span>
+                      <span>Distance: {hospitals[0].distance.toFixed(1)} km</span>
+                      <span className={styles.hospitalScore}>
+                        Score: {(hospitals[0].weightedScore * 100).toFixed(1)}%
+                      </span>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                {showNearest && selectedHospital && (
-                  <div className={styles.bestHospital}>
-                    <h4>Selected Hospital:</h4>
-                    <div className={`${styles.hospitalItem} ${styles.selectedHospital}`}>
-                      <div className={styles.hospitalName}>{selectedHospital.name}</div>
-                      <div className={styles.hospitalDetails}>
-                        <span>Rating: {selectedHospital.rating}/5</span>
-                        <span>Facilities: {selectedHospital.facilitiesScore}/5</span>
-                        <span>Doctors: {(selectedHospital.doctorsAvailability * 100).toFixed(0)}%</span>
-                        <span>Distance: {selectedHospital.distance.toFixed(1)} km</span>
-                        <span className={styles.hospitalScore}>
-                          Score: {(selectedHospital.weightedScore * 100).toFixed(1)}%
-                        </span>
-                      </div>
+              {showNearest && selectedHospital && (
+                <div className={styles.bestHospital}>
+                  <h4>Selected Hospital:</h4>
+                  <div className={`${styles.hospitalItem} ${styles.selectedHospital}`}>
+                    <div className={styles.hospitalName}>{selectedHospital.name}</div>
+                    <div className={styles.hospitalDetails}>
+                      <span>Rating: {selectedHospital.rating}/5</span>
+                      <span>Facilities: {selectedHospital.facilitiesScore}/5</span>
+                      <span>Doctors: {(selectedHospital.doctorsAvailability * 100).toFixed(0)}%</span>
+                      <span>Distance: {selectedHospital.distance.toFixed(1)} km</span>
+                      <span className={styles.hospitalScore}>
+                        Score: {(selectedHospital.weightedScore * 100).toFixed(1)}%
+                      </span>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                <ul>
-                  {hospitals.slice(0, 10).map((hospital, index) => (
-                    <li
-                      key={index}
-                      className={`${styles.hospitalItem} ${
-                        selectedHospital && selectedHospital._id === hospital._id ? styles.activeHospital : ''
-                      }`}
-                      onClick={() => handleHospitalSelect(hospital)}
-                      onMouseOver={() => {
-                        // When hovering over hospital item, highlight marker on map if map is visible
-                        if (mapRef.current && !showNearest) {
-                          // You could implement additional UI feedback here if needed
-                        }
-                      }}
-                    >
-                      <div className={styles.hospitalName}>{hospital.name}</div>
-                      <div className={styles.hospitalDetails}>
-                        <span>Rating: {hospital.rating}/5</span>
-                        <span>Facilities: {hospital.facilitiesScore}/5</span>
-                        <span>Doctors: {(hospital.doctorsAvailability * 100).toFixed(0)}%</span>
-                        <span>Distance: {hospital.distance.toFixed(1)} km</span>
-                        <span className={styles.hospitalScore}>
-                          Score: {(hospital.weightedScore * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ul>
+                {hospitals.slice(0, 10).map((hospital, index) => (
+                  <li
+                    key={index}
+                    className={`${styles.hospitalItem} ${
+                      selectedHospital && selectedHospital._id === hospital._id ? styles.activeHospital : ''
+                    }`}
+                    onClick={() => handleHospitalSelect(hospital)}
+                  >
+                    <div className={styles.hospitalName}>{hospital.name}</div>
+                    <div className={styles.hospitalDetails}>
+                      <span>Rating: {hospital.rating}/5</span>
+                      <span>Facilities: {hospital.facilitiesScore}/5</span>
+                      <span>Doctors: {(hospital.doctorsAvailability * 100).toFixed(0)}%</span>
+                      <span>Distance: {hospital.distance.toFixed(1)} km</span>
+                      <span className={styles.hospitalScore}>
+                        Score: {(hospital.weightedScore * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
-          )
+          </div>
         )}
       </div>
     </div>
