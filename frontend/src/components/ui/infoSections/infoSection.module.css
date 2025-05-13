@@ -1,0 +1,97 @@
+.infoSection {
+    padding: 4rem 1rem;
+  }
+  
+  .infoSectionGray {
+    background-color: #f0f4f8;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .infoSectionGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  
+  .infoSectionReverse {
+    direction: rtl;
+  }
+  
+  .infoSectionContent {
+    direction: ltr;
+  }
+  
+  .infoSectionTitle {
+    font-size: 2rem;
+    color: #205a95;
+    margin-bottom: 1rem;
+  }
+  
+  .infoSectionDescription {
+    font-size: 1.1rem;
+    color: #000000;
+    margin-bottom: 1.5rem;
+  }
+  
+  .featuresList {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .featureItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .featureCheck {
+    color: #117add;
+  }
+  
+  .infoSectionButton {
+    text-decoration: none;
+    background-color: #3e4abe;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    display: inline-block;
+  }
+  
+  .infoSectionImageContainer {
+    position: relative;
+  }
+  
+  .infoSectionImage {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .accentCircle1 {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(225, 0, 0, 0.1);
+    border-radius: 50%;
+    z-index: -1;
+  }
+  
+  .accentCircle2 {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(17, 109, 201, 0.1);
+    border-radius: 50%;
+    z-index: -1;
+  }

@@ -21,7 +21,12 @@ mongoose
 
 app.use(express.static("public"));
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization']
+}));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -30,8 +35,9 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "public/index.html");
 });
 
+// Use both API routers - fixed the commented out api routes
 app.use("/api", api);
-app.use("/api/hospitals", hospitalRoutes);
+app.use("/api", hospitalRoutes);
 
 const port = process.env.PORT || 5000;
 
