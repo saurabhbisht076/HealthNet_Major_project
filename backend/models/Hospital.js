@@ -29,9 +29,7 @@ const HospitalSchema = new mongoose.Schema({
 });
 // Create a geospatial index
 HospitalSchema.index({ location: "2dsphere" });
-
-const Hospital = mongoose.model("Hospital", HospitalSchema);
-
+const Hospital = mongoose.model("Hospital", HospitalSchema, "hospital_data");
 export default Hospital;
 
 
