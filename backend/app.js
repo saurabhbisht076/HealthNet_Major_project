@@ -35,8 +35,9 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "public/index.html");
 });
 
+// Use both API routers - fixed the commented out api routes
 app.use("/api", api);
-//app.use("/api/hospital_data", hospitalRoutes);
+app.use("/api", hospitalRoutes);
 
 const port = process.env.PORT || 5000;
 
