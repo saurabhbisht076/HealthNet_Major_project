@@ -1,27 +1,42 @@
 import React from "react";
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Typography,
-} from "@mui/material";
-import { Cancel, DoneOutline } from "@mui/icons-material";
+import { Button, Card, CardContent, Typography } from "@mui/material";
+import { Cancel, DoneOutline, Person, Email, Work, Business } from "@mui/icons-material";
 import { useNavigate, createSearchParams } from "react-router-dom";
 import api from "../../../../api";
 import { useAuth } from "../../../../AuthContext";
+import styles from "./VerifyUser.module.css";
 
 export default function VerificationCard(props) {
   const { setLoader, setAlert, setAlertMsg } = useAuth();
   const navigate = useNavigate();
 
-  const handleVerify = () => {
-    navigate({
-      pathname: "/dashboard/admin/verify-user/addnew",
-      search: `?${createSearchParams({
+  const handleVerify = async () => {
+    try {
+      setLoader(true);
+      const res = await api.verify({ 
         uid: props.user.uid,
-      })}`,
-    });
+        // Add any additional verification data needed by your API
+      });
+      
+      if (res.data.error) {
+        setLoader(false);
+        setAlertMsg(res.data.errorMsg);
+        setAlert(true);
+      } else {
+        setLoader(false);
+        // Call the onVerify callback from props instead of navigating
+        if (props.onVerify) {
+          props.onVerify(props.user.uid);
+        }
+        setAlertMsg(res.data.msg || "User verified successfully!");
+        setAlert(true);
+      }
+    } catch (error) {
+      setLoader(false);
+      setAlertMsg(error?.response?.data?.errorMsg || "An Error Occurred!");
+      setAlert(true);
+      console.error(error);
+    }
   };
 
   const handleReject = async () => {
@@ -34,58 +49,107 @@ export default function VerificationCard(props) {
         setAlert(true);
       } else {
         setLoader(false);
-        if (!alert(res.data.msg)) {
-          window.location.reload();
+        if (props.onReject) {
+          props.onReject(props.user.uid);
         }
+        setAlertMsg(res.data.msg || "User rejected successfully!");
+        setAlert(true);
       }
     } catch (error) {
       setLoader(false);
-      setAlertMsg(error?.response?.data?.errorMsg || "An Error Occured!");
+      setAlertMsg(error?.response?.data?.errorMsg || "An Error Occurred!");
       setAlert(true);
       console.log(error);
     }
   };
 
+  const renderStatusBadge = () => {
+    const status = props.user.status || "pending";
+    let badgeClass = "";
+    let badgeText = "";
+
+    switch (status) {
+      case "verified":
+        badgeClass = "verifiedBadge";
+        badgeText = "Verified";
+        break;
+      case "rejected":
+        badgeClass = "rejectedBadge";
+        badgeText = "Rejected";
+        break;
+      default:
+        badgeClass = "pendingBadge";
+        badgeText = "Pending";
+    }
+
+    return (
+      <div className={`${styles.statusBadge} ${styles[badgeClass]}`}>
+        {badgeText}
+      </div>
+    );
+  };
+
   return (
-    <Card sx={{ maxWidth: "100%", textAlign: "center" }} variant="outlined">
-      <CardContent>
-        <br />
-        <Typography variant="h5" component="div">
-          {`${props.user.fname} ${props.user.lname}`}
-        </Typography>
-        <Typography sx={{ mb: 2.5, fontSize: "0.8rem" }} color="text.secondary">
-          {props.user.email}
-        </Typography>
-        <Typography
-          sx={{ mb: 1.5, fontSize: "1rem" }}
-          color="text.secondary"
-        >{`Position Applied for: ${props.user.userType}`}</Typography>
-        <Typography sx={{ mb: 1.5, fontSize: "0.8rem" }} color="text.secondary">
-          {props.user.department
-            ? `Department of ${props.user.department}`
-            : "\u00A0"}
-        </Typography>
-        <br />
-        <CardActions sx={{ justifyContent: "space-between" }} disableSpacing>
-          <Button
-            variant="contained"
-            color="success"
-            size="small"
-            endIcon={<DoneOutline />}
-            onClick={handleVerify}
-          >
-            Verify
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            size="small"
-            endIcon={<Cancel />}
-            onClick={handleReject}
-          >
-            Reject
-          </Button>
-        </CardActions>
+    <Card className={styles.card}>
+      <CardContent className={styles.cardContent}>
+        <div className={styles.userInfo}>
+          {props.showStatus && renderStatusBadge()}
+          
+          <Typography className={styles.userName}>
+            <span className={styles.iconWrapper}>
+              <Person fontSize="small" />
+            </span>
+            {`${props.user.fname} ${props.user.lname}`}
+          </Typography>
+
+          <Typography className={styles.userEmail}>
+            <span className={styles.iconWrapper}>
+              <Email fontSize="small" />
+            </span>
+            {props.user.email}
+          </Typography>
+
+          <Typography className={styles.userPosition}>
+            <span className={styles.iconWrapper}>
+              <Work fontSize="small" />
+            </span>
+            {`Position: ${props.user.userType}`}
+          </Typography>
+
+          {props.user.department && (
+            <Typography className={styles.userDepartment}>
+              <span className={styles.iconWrapper}>
+                <Business fontSize="small" />
+              </span>
+              {`Department of ${props.user.department}`}
+            </Typography>
+          )}
+        </div>
+
+        {props.showActions !== false && (
+          <div className={styles.cardActions}>
+            <Button
+              variant="contained"
+              className={styles.verifyButton}
+              size="small"
+              endIcon={<DoneOutline />}
+              onClick={handleVerify}
+              disabled={props.user.status === "verified"}
+            >
+              Verify
+            </Button>
+            <Button
+              variant="contained"
+              className={styles.rejectButton}
+              size="small"
+              endIcon={<Cancel />}
+              onClick={handleReject}
+              disabled={props.user.status === "rejected"}
+            >
+              Reject
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
