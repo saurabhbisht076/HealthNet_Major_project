@@ -7,6 +7,8 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate, createSearchParams } from "react-router-dom";
 
+import styles from "./StaffList.module.css";
+
 export default function StaffListCard(props) {
   const navigate = useNavigate();
 
@@ -19,35 +21,49 @@ export default function StaffListCard(props) {
     });
   };
 
+  const getInitials = (fname, lname) => {
+    return `${fname?.charAt(0) || ""}${lname?.charAt(0) || ""}`;
+  };
+
   return (
-    <Card sx={{ maxWidth: "100%", textAlign: "center" }} variant="outlined">
-      <CardContent>
-        <br />
-        <Typography variant="h5" component="div" color="#071952">
+    <Card className={styles.card}>
+      <CardContent className={styles.cardContent}>
+        <div className={styles.avatarCircle}>
+          {getInitials(props.staff.fname, props.staff.lname)}
+        </div>
+        
+        <Typography className={styles.staffName}>
           {`${props.staff.fname} ${props.staff.lname}`}
         </Typography>
-        <Typography sx={{ mb: 2.5, fontSize: "0.8rem" }} color="text.secondary">
+        
+        <Typography className={styles.staffEmail}>
           {props.staff.email}
         </Typography>
-        <Typography sx={{ mb: 1, fontSize: "0.9rem" }} color="text.secondary">
+        
+        <Typography className={styles.staffTime}>
           {props.staff.time}
         </Typography>
-        <Typography variant="subtitle1" sx={{ mb: 1.5 }} color="#4682A9">
-          {props.staff.workDays.join(" | ")}
-        </Typography>
-        <br />
-        <CardActions disableSpacing sx={{ justifyContent: "space-between" }}>
-          <Button
-            variant="contained"
-            color="grey"
-            size="small"
-            endIcon={<EditIcon />}
-            onClick={handleEdit}
-          >
-            Edit
-          </Button>
-        </CardActions>
+        
+        <div className={styles.workDaysContainer}>
+          {props.staff.workDays.map((day, index) => (
+            <span key={index} className={styles.workDayTag}>
+              {day}
+            </span>
+          ))}
+        </div>
       </CardContent>
+      
+      <CardActions className={styles.cardActions}>
+        <Button
+          variant="contained"
+          className={styles.editButton}
+          size="medium"
+          endIcon={<EditIcon />}
+          onClick={handleEdit}
+        >
+          Edit Details
+        </Button>
+      </CardActions>
     </Card>
   );
-}
+};
