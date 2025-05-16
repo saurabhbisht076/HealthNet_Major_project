@@ -13,6 +13,15 @@ export default function DocList() {
   const [department, setDepartment] = useState("All Departments");
   const [docs, setDocs] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  // Add font loading detection
+  useEffect(() => {
+    document.fonts.ready.then(() => {
+      setFontsLoaded(true);
+      document.documentElement.classList.add('fonts-loaded');
+    });
+  }, []);
 
   useEffect(() => {
     async function fetchDocs() {
@@ -29,7 +38,7 @@ export default function DocList() {
         }
       } catch (error) {
         setLoader(false);
-        setAlertMsg(error?.response?.data?.errorMsg || "An Error Occured!");
+        setAlertMsg(error?.response?.data?.errorMsg || "An Error Occurred!");
         setAlert(true);
         console.error(error);
       }
@@ -48,7 +57,7 @@ export default function DocList() {
   }, [department, docs]);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${fontsLoaded ? styles.fontsLoaded : ''}`}>
       <Navbar />
       <div className={styles.filterContainer}>
         <SelectInput
@@ -59,9 +68,29 @@ export default function DocList() {
         />
       </div>
       <div className={styles.cardContainer}>
-        <Grid container spacing={3}>
+        <Grid 
+          container 
+          spacing={2}
+          sx={{
+            padding: { xs: '0 16px', sm: '0 24px' },
+            margin: '0 auto',
+            maxWidth: '1200px',
+            width: 'calc(100% - 32px)'
+          }}
+        >
           {doctors.map((doctor, index) => (
-            <Grid key={index} item xs={12} md={6} lg={4}>
+            <Grid 
+              key={doctor.uid || index}
+              item 
+              xs={12} 
+              md={6} 
+              lg={4}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                padding: '4px !important'
+              }}
+            >
               <DocListCard doctor={doctor} />
             </Grid>
           ))}
