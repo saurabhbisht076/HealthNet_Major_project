@@ -6,6 +6,7 @@ import StaffListCard from "./StaffListCard";
 import api from "../../../../api";
 import { useAuth } from "../../../../AuthContext";
 
+
 export default function StaffList() {
   const { setLoader, setAlert, setAlertMsg } = useAuth();
   const [staffs, setStaffs] = useState([]);
@@ -40,7 +41,7 @@ export default function StaffList() {
       <div className={styles.cardContainer}>
         <Grid container spacing={3}>
           {staffs.map((staff, index) => (
-            <Grid key={index} item xs={12} md={6} lg={4}>
+            <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
               <StaffListCard staff={staff} />
             </Grid>
           ))}
