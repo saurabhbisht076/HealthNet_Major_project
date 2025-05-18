@@ -1,26 +1,38 @@
+// Last updated: 2025-05-16 10:58:44 UTC by virusvinay
+
 import React, { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import Navbar from "../../../Navbar/Navbar";
 import DocListCard from "./DocListCard";
-import SelectInput from "../../../SelectInput/SelectInput";
 import styles from "./DocList.module.css";
 import api from "../../../../api";
 import { departments } from "../../Doctor/doctorDepartments";
 import { useAuth } from "../../../../AuthContext";
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function DocList() {
   const { setLoader, setAlert, setAlertMsg } = useAuth();
   const [department, setDepartment] = useState("All Departments");
+  const [searchQuery, setSearchQuery] = useState("");
   const [docs, setDocs] = useState([]);
   const [doctors, setDoctors] = useState([]);
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(true); // Changed to true by default
 
-  // Add font loading detection
   useEffect(() => {
+    // Add a class to body when component mounts
+    document.body.classList.add('fonts-loaded');
+    
+    // Check if fonts are actually loaded
     document.fonts.ready.then(() => {
       setFontsLoaded(true);
       document.documentElement.classList.add('fonts-loaded');
     });
+
+    // Cleanup function to remove class when component unmounts
+    return () => {
+      document.body.classList.remove('fonts-loaded');
+      document.documentElement.classList.remove('fonts-loaded');
+    };
   }, []);
 
   useEffect(() => {
@@ -48,24 +60,49 @@ export default function DocList() {
   }, [setLoader, setAlert, setAlertMsg]);
 
   useEffect(() => {
-    if (department === "All Departments") {
-      setDoctors(docs);
-    } else {
-      const filteredData = docs.filter((doc) => doc.department === department);
-      setDoctors(filteredData);
+    let filteredDocs = [...docs];
+    
+    if (department !== "All Departments") {
+      filteredDocs = filteredDocs.filter((doc) => doc.department === department);
     }
-  }, [department, docs]);
+    
+    if (searchQuery) {
+      filteredDocs = filteredDocs.filter((doc) => 
+        `${doc.fname} ${doc.lname}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doc.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doc.speciality.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    setDoctors(filteredDocs);
+  }, [department, docs, searchQuery]);
 
   return (
-    <div className={`${styles.container} ${fontsLoaded ? styles.fontsLoaded : ''}`}>
+    <div className={styles.container}>
       <Navbar />
-      <div className={styles.filterContainer}>
-        <SelectInput
-          label=""
-          value={department}
-          setValue={setDepartment}
-          options={departments}
-        />
+      <div className={styles.searchContainer}>
+        <div className={styles.filterBox}>
+          <select 
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+            className={styles.departmentSelect}
+          >
+            <option value="All Departments">All Departments</option>
+            {departments.map((dept) => (
+              <option key={dept} value={dept}>{dept}</option>
+            ))}
+          </select>
+        </div>
+        <div className={styles.searchBox}>
+          <SearchIcon className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Search doctors..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchInput}
+          />
+        </div>
       </div>
       <div className={styles.cardContainer}>
         <Grid 
@@ -83,7 +120,7 @@ export default function DocList() {
               key={doctor.uid || index}
               item 
               xs={12} 
-              md={6} 
+              sm={6} 
               lg={4}
               sx={{
                 display: 'flex',

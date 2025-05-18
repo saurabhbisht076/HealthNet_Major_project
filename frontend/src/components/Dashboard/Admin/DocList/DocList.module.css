@@ -1,420 +1,229 @@
-/* Font definitions with preload strategy */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap&display=swap') layer(fonts);
+/* Last updated: 2025-05-16 10:49:47 UTC by virusvinay */
 
-/* CSS Variables */
-:root {
-  --primary: #4a6bff;
-  --primary-light: #eef1ff;
-  --primary-dark: #3a5bff;
-  --accent: #FF8E53;
-  --accent-gradient: linear-gradient(45deg, #FFA500 0%, #FF8E53 100%);
-  --accent-gradient-hover: linear-gradient(45deg, #FF8E53 0%, #FFA500 100%);
-  --dark: #2a3447;
-  --light: #f8fafc;
-  --success: #2e7d32;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --card-hover-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-  --animation-speed: 0.4s;
-}
-
-/* Container Styles */
 .container {
-  position: relative;
+  width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f9faff 0%, #f0f4ff 100%);
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: var(--dark);
-  overflow-x: hidden;
-  padding-bottom: 3rem;
+  background-color: #f5f7f9;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 0.3s ease-in;
 }
 
-/* Add this class to ensure styles persist after font loading */
 .fontsLoaded {
   opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
-/* Background Decorative Elements */
-.container::before {
-  content: '';
-  position: absolute;
-  top: -180px;
-  right: -180px;
-  width: 360px;
-  height: 360px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(74, 107, 255, 0.1) 0%, rgba(74, 107, 255, 0.03) 70%, transparent 100%);
-  z-index: 0;
-}
-
-.container::after {
-  content: '';
-  position: absolute;
-  bottom: -150px;
-  left: -150px;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 142, 83, 0.1) 0%, rgba(255, 142, 83, 0.03) 70%, transparent 100%);
-  z-index: 0;
-}
-
-/* ===== Filter Container Styles ===== */
-.filterContainer {
+.searchContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 3%;
+}
+
+.filterBox {
+  width: 200px;
+}
+
+.departmentSelect {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+.searchBox {
   position: relative;
-  z-index: 1;
+  width: 300px;
+  display: flex;
+  align-items: center;
 }
 
-.filterContainer::before {
-  content: '';
+.searchIcon {
   position: absolute;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(74, 107, 255, 0.08);
-  border-radius: 12px;
-  transform: rotate(45deg);
-  top: calc(50% - 20px);
-  left: calc(50% - 120px);
-  z-index: -1;
+  left: 12px;
+  color: #666;
 }
 
-.filterContainer::after {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background-color: rgba(255, 142, 83, 0.1);
-  border-radius: 6px;
-  transform: rotate(45deg);
-  top: calc(50% - 10px);
-  right: calc(50% - 140px);
-  z-index: -1;
+.searchInput {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  outline: none;
 }
 
-/* ===== Card Container Styles ===== */
 .cardContainer {
-  position: relative;
-  z-index: 1;
-  padding: 0.5rem 0;
+  flex: 1;
+  padding: 30px 0;
 }
 
-/* Force smooth and consistent transitions */
+/* Card Styles */
 .card {
-  composes: MuiCard-root from global;
-  width: 400px !important;
-  text-align: center !important;
-  border-radius: 20px !important;
-  box-shadow: var(--card-shadow) !important;
-  transition: all var(--animation-speed) cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-  margin: 20px !important;
-  position: relative !important;
-  overflow: hidden !important;
-  background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.03) !important;
-  will-change: transform;
-  backface-visibility: hidden;
+  width: 100%;
+  max-width: 380px;
+  height: 370px;
+  background-color: #fff;
+  border-radius: 10px !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 40px; /* More space between cards vertically */
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
 }
 
-/* Only changing the hover effect for border and background */
 .card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--card-hover-shadow);
-  /* Modified these two lines only */
-  border-color: rgba(74, 107, 255, 0.15);  /* Lighter blue border */
-  background: linear-gradient(to bottom, #ffffff 0%, #f5f8ff 100%);  /* Subtle blue tint gradient */
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
 }
 
-.card:hover::after {
-  opacity: 1;
+.cardContent {
+  padding: 0 !important;
 }
 
-.card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 20px;
-  box-shadow: 0 0 20px rgba(74, 107, 255, 0.4);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 60px;
-  height: 60px;
-  background-image: radial-gradient(circle, rgba(74, 107, 255, 0.1) 1px, transparent 2px);
-  background-size: 10px 10px;
-  opacity: 0.5;
-  border-radius: 10px;
-  z-index: 0;
-  transition: opacity 0.3s ease;
-}
-
-.card:hover::before {
-  opacity: 0.8;
-}
-
-/* ===== Avatar Container Styles ===== */
-.avatarContainer {
+.avatarSection {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  margin-bottom: 12px;
-  padding-top: 20px;
-  position: relative;
-}
-
-.avatarContainer::after {
-  content: '';
-  position: absolute;
-  width: 40px;
-  height: 3px;
-  background: linear-gradient(90deg, #3a5bff, #82a4ff);
-  bottom: -5px;
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-.card:hover .avatarContainer::after {
-  width: 80px;
+  padding: 24px 16px 16px;
 }
 
 .avatar {
-  width: 70px !important;
-  height: 70px !important;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
-  margin-bottom: 16px !important;
-  font-size: 1.8rem !important;
-  box-shadow: 0 4px 12px rgba(74, 107, 255, 0.3) !important;
-  transition: all 0.3s ease !important;
-  position: relative;
-  z-index: 1;
+  width: 64px !important;
+  height: 64px !important;
+  background-color: #1657ec !important;
+  color: white !important;
+  font-size: 1.5rem !important;
+  font-weight: 500 !important;
+  margin-right: 16px;
 }
 
-.avatar::before {
-  content: '';
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  right: -3px;
-  bottom: -3px;
-  background: linear-gradient(135deg, rgba(74, 107, 255, 0.5) 0%, rgba(74, 107, 255, 0.2) 100%);
-  border-radius: 50%;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.card:hover .avatar {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(74, 107, 255, 0.4) !important;
-}
-
-.card:hover .avatar::before {
-  opacity: 1;
-}
-
-/* ===== Text Content Styles ===== */
 .doctorName {
-  font-weight: 700 !important;
-  font-size: 1.3rem !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #333;
   margin-bottom: 6px !important;
-  color: var(--dark) !important;
-  position: relative;
-  z-index: 1;
+  text-align: left;
+}
+
+.nameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .speciality {
-  font-size: 0.85rem !important;
-  color: var(--primary) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.5px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  background-color: var(--primary-light);
+  display: inline-block;
+  background-color: #e6f4ff;
+  color: #0095ff;
   padding: 4px 12px;
-  border-radius: 20px;
-  margin-top: 8px !important;
-  transition: all 0.3s ease;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
-.card:hover .speciality {
-  padding: 4px 16px;
-  box-shadow: 0 2px 8px rgba(74, 107, 255, 0.15);
+.infoSection {
+  padding: 24px 20px;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.divider {
-  margin: 16px 24px !important;
-  border-color: rgba(0, 0, 0, 0.05) !important;
-  height: 1px !important;
-  background: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.05) 50%, transparent 100%) !important;
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px; /* Reduced from 16px */
+  padding-bottom: 10px; /* Reduced from 16px */
+  border-bottom: 1px solid #f0f0f0;
 }
 
-/* ===== Details Container Styles ===== */
-.detailsContainer {
-  text-align: center;
-  padding: 0 20px;
-  position: relative;
+.infoRow:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
-.detailsContainer::before {
-  content: '';
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  background-color: var(--primary-light);
-  border-radius: 4px;
-  top: 10px;
-  left: 20px;
-  transform: rotate(45deg);
-  opacity: 0.5;
-  z-index: 0;
+.label {
+  color: #666;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
 }
 
-.detailText {
-  margin-bottom: 10px !important;
-  font-size: 0.85rem !important;
-  line-height: 1.5 !important;
-  color: #4a5568 !important;
-  position: relative;
-  z-index: 1;
-  transition: transform 0.3s ease;
+.value {
+  color: #333;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  text-align: right;
 }
 
-.card:hover .detailText:hover {
-  transform: translateX(3px);
-  color: var(--primary-dark) !important;
+.value.unavailable {
+  color: #e53935 !important;
+  font-weight: 500 !important;
 }
 
-/* ===== Actions Container Styles ===== */
-.actionsContainer {
-  display: flex !important;
-  justify-content: space-between !important;
-  padding: 0 20px 20px !important;
-  align-items: center !important;
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
 }
 
 .editButton {
-  background: var(--accent-gradient) !important;
+  background-color: #1657ec !important;
   color: white !important;
-  font-weight: 600 !important;
-  font-size: 0.8rem !important;
-  padding: 8px 16px !important;
-  min-width: 90px !important;
-  border-radius: 8px !important;
-  box-shadow: 0 2px 8px rgba(255, 165, 0, 0.3) !important;
-  transition: all 0.3s ease !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.editButton::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background-color: rgba(255, 255, 255, 0.2);
-  transform: rotate(30deg) translateY(100%);
-  opacity: 0;
-  transition: transform 0.6s ease, opacity 0.3s ease;
+  border-radius: 4px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  padding: 6px 16px !important;
+  min-width: 120px !important;
+  box-shadow: none !important;
 }
 
 .editButton:hover {
-  background: var(--accent-gradient-hover) !important;
-  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4) !important;
-  transform: translateY(-1px) !important;
+  background-color: #1657ec !important;
 }
 
-.editButton:hover::after {
-  transform: rotate(30deg) translateY(-100%);
-  opacity: 1;
+.fee {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: #103bc7;
+  font-weight: 600 !important;
+  font-size: 1.125rem !important;
 }
 
-.feeText {
-  display: flex !important;
-  align-items: center !important;
-  font-weight: 700 !important;
-  font-size: 1rem !important;
-  color: var(--success) !important;
-  padding: 4px 10px;
-  border-radius: 12px;
-  transition: all 0.3s ease;
+.fee .unavailable {
+  color: #e53935;
+  font-weight: 500;
+  font-size: 0.9rem;
 }
 
-.card:hover .feeText {
-  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.15);
-  transform: scale(1.05);
+.feeLabel {
+  color: #666;
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-top: 2px;
 }
 
-.icon {
-  vertical-align: middle !important;
-  margin-right: 6px !important;
-  font-size: 1rem !important;
-  color: var(--primary) !important;
-  transition: all 0.3s ease !important;
-}
-
-.card:hover .icon {
-  color: var(--primary-dark) !important;
-  transform: rotate(10deg);
-}
-
-/* ===== Animation and UI Stability Fixes ===== */
-/* Adding visible fade-in animation for smoother loading */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Force consistent rendering with a class that's added after fonts load */
-.fonts-loaded .card {
-  animation: fadeIn 0.4s ease-out;
-}
-
-/* Ensure MUI card styling doesn't conflict with our custom styles */
-.MuiCard-root {
-  overflow: visible !important;
-}
-
-/* ===== Responsive Design ===== */
-@media (max-width: 767px) {
-  .card {
-    width: 100%;
-    max-width: 400px;
-    margin: 16px auto !important;
+/* Responsive Styles */
+@media (max-width: 600px) {
+  .searchContainer {
+    flex-direction: column;
+    gap: 12px;
   }
   
-  .container {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+  .filterBox, .searchBox {
+    width: 100%;
   }
-}
-
-/* Additional code to ensure stable font loading */
-.container * {
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.fonts-loaded .card {
-  animation: fadeIn 0.4s ease-out;
 }
