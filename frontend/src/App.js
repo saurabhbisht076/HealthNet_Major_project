@@ -10,7 +10,7 @@ import HomePage from "./components/HomePage/HomePage";
 import SignIn from "./components/SignIn/SignIn";
 import SignUp from "./components/SignUp/SignUp";
 import Page404 from "./components/Page404/Page404";
-
+import AboutUs from "../src/pages/aboutUs.js";
 import PatientDash from "./components/Dashboard/Patient/Patinet";
 import {
   BookAppointment,
@@ -53,6 +53,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" exact element={<HomePage />} />
+        <Route path="/about" exact element={<AboutUs />} /> 
         <Route
           path="/signin"
           exact
