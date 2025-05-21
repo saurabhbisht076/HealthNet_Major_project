@@ -44,15 +44,25 @@ export default function ViewFeedbacks() {
     <div className={styles.container}>
       <Navbar />
       <div className={styles.cardContainer}>
-        <Grid container spacing={3}>
+        <Grid container className={styles.gridContainer}>
           {feedbacks.map((feedback, index) => (
-            <Grid key={index} item xs={12}>
-              <FeedbackCard feedback={feedback} />
+            <Grid 
+              key={index} 
+              item 
+              className={styles.gridItem}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className={styles.cardWrapper}>
+                <FeedbackCard 
+                  feedback={feedback} 
+                  className={styles.card}
+                />
+              </div>
             </Grid>
           ))}
         </Grid>
         {unavailableMsg && (
-          <Alert icon={false} severity="error">
+          <Alert icon={false} severity="error" className={styles.alert}>
             {unavailableMsg}
           </Alert>
         )}

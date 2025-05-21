@@ -1,30 +1,229 @@
+/* Last updated: 2025-05-16 10:49:47 UTC by virusvinay */
+
 .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f7f9;
+  display: flex;
+  flex-direction: column;
 }
 
-.filterContainer {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 3%;
+.fontsLoaded {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.searchContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.filterBox {
+  width: 200px;
+}
+
+.departmentSelect {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+.searchBox {
+  position: relative;
+  width: 300px;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: #666;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  outline: none;
 }
 
 .cardContainer {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    padding: 3% 7% 7% 7%;
+  flex: 1;
+  padding: 30px 0;
 }
 
-@media screen and (max-width: 767px) {
-    .cardContainer {
-        max-width: 100%;
-        width: 100%;
-        padding-left: 3%;
-        padding-right: 3%;
-    }
+/* Card Styles */
+.card {
+  width: 100%;
+  max-width: 380px;
+  height: 370px;
+  background-color: #fff;
+  border-radius: 10px !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 40px; /* More space between cards vertically */
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.cardContent {
+  padding: 0 !important;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 24px 16px 16px;
+}
+
+.avatar {
+  width: 64px !important;
+  height: 64px !important;
+  background-color: #1657ec !important;
+  color: white !important;
+  font-size: 1.5rem !important;
+  font-weight: 500 !important;
+  margin-right: 16px;
+}
+
+.doctorName {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #333;
+  margin-bottom: 6px !important;
+  text-align: left;
+}
+
+.nameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.speciality {
+  display: inline-block;
+  background-color: #e6f4ff;
+  color: #0095ff;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.infoSection {
+  padding: 24px 20px;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px; /* Reduced from 16px */
+  padding-bottom: 10px; /* Reduced from 16px */
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.infoRow:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.label {
+  color: #666;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+.value {
+  color: #333;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  text-align: right;
+}
+
+.value.unavailable {
+  color: #e53935 !important;
+  font-weight: 500 !important;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
+
+.editButton {
+  background-color: #1657ec !important;
+  color: white !important;
+  border-radius: 4px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  padding: 6px 16px !important;
+  min-width: 120px !important;
+  box-shadow: none !important;
+}
+
+.editButton:hover {
+  background-color: #1657ec !important;
+}
+
+.fee {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: #103bc7;
+  font-weight: 600 !important;
+  font-size: 1.125rem !important;
+}
+
+.fee .unavailable {
+  color: #e53935;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.feeLabel {
+  color: #666;
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+  .searchContainer {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .filterBox, .searchBox {
+    width: 100%;
+  }
 }

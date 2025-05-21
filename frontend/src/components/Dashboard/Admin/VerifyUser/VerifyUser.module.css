@@ -1,24 +1,262 @@
+/* Container styles */
 .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    min-height: 100vh;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.container.fontsLoaded {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .cardContainer {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 7% 3%;
+  padding: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
-@media screen and (max-width: 767px) {
-    .cardContainer {
-        max-width: 100%;
-        width: 100%;
-        padding-left: 3%;
-        padding-right: 3%;
-    }
+/* Tabs styling */
+.tabsContainer {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.tabsContainer:hover {
+  transform: translateY(-2px);
+}
+
+.tabList {
+  min-height: 64px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.tabItem {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.tabItem:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.tabsContent {
+  padding: 24px;
+}
+
+/* Search and filter section */
+.searchBar {
+  display: flex;
+  align-items: center;
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+}
+
+.searchBar:focus-within {
+  background: white;
+  box-shadow: 0 0 0 2px #2196f3;
+}
+
+.filterControls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+/* Card styling */
+.card {
+  height: 100%;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(34, 87, 184, 0.314) !important;
+  border-color: #235cb8d2;
+}
+
+.cardContent {
+  padding: 20px !important;
+}
+
+.userInfo {
+  position: relative;
+  padding-top: 8px;
+}
+
+/* Status badges */
+.statusBadge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pendingBadge {
+  background: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffb74d;
+}
+
+.verifiedBadge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #66bb6a;
+}
+
+.rejectedBadge {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef5350;
+}
+
+/* User information styling */
+.userName {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 12px !important;
+  color: #1a237e;
+}
+
+.userEmail,
+.userPosition,
+.userDepartment {
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+  color: #546e7a !important;
+  font-size: 0.9rem !important;
+}
+
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  color: #78909c;
+}
+
+/* Action buttons */
+.cardActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.verifyButton,
+.rejectButton {
+  flex: 1;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  padding: 6px 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+.verifyButton {
+  background: #2196f3 !important;
+}
+
+.verifyButton:hover {
+  background: #1976d2 !important;
+}
+
+.rejectButton {
+  background: #f44336 !important;
+}
+
+.rejectButton:hover {
+  background: #d32f2f !important;
+}
+
+.verifyButton:disabled,
+.rejectButton:disabled {
+  background: #e0e0e0 !important;
+  color: #9e9e9e !important;
+  cursor: not-allowed;
+}
+
+/* Refresh button */
+.refreshButton {
+  margin-left: 16px !important;
+  color: #78909c !important;
+  transition: all 0.2s ease !important;
+}
+
+.refreshButton:hover {
+  color: #2196f3 !important;
+  background-color: rgba(33, 150, 243, 0.08) !important;
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  width: 100%;
+  color: #78909c;
+}
+
+.emptyStateIcon {
+  font-size: 48px !important;
+  margin-bottom: 16px;
+  color: #b0bec5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .cardContainer {
+    padding: 16px;
+  }
+  
+  .tabsContent {
+    padding: 16px;
+  }
+  
+  .filterControls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filterControls > * {
+    width: 100%;
+  }
+}
+
+/* Animation keyframes */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Add animation classes */
+.animate-in {
+  animation: fadeSlideIn 0.3s ease-out forwards;
 }
