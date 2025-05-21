@@ -2,10 +2,11 @@ import React from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { Logout } from "@mui/icons-material";
-import { Avatar, IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { useAuth } from "../../AuthContext";
 import api from "../../api";
 import styles from "./Navbar.module.css";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Navbar() {
       navigate("/");
     } catch (error) {
       setLoader(false);
-      setAlertMsg(error?.response?.data?.error || "An Error Occured!");
+      setAlertMsg(error?.response?.data?.error || "An Error Occurred!");
       setAlert(true);
       console.error(error);
     }
@@ -33,16 +34,25 @@ export default function Navbar() {
 
   return (
     <div className={styles.appBar}>
-      <p className={styles.userName}>
-        {userName ? `${userName}` : "Welcome!"}
-      </p>
-      <Tooltip title="Log Out">
-        <IconButton onClick={handleLogOut} sx={{ p: 0 }}>
-          <Avatar sx={{ bgcolor: "#fb4a59" }}>
-            <Logout />
-          </Avatar>
-        </IconButton>
-      </Tooltip>
+      <div className={styles.logoContainer}>
+        <FavoriteIcon className={styles.heartIcon} />
+        <span className={styles.logoText}>HealthNet</span>
+      </div>
+      
+      <div className={styles.userControls}>
+        <div className={styles.userInfo}>
+          <div className={styles.userAvatar}>VS</div>
+          <span className={styles.userName}>{userName || "Vinay Singh"}</span>
+        </div>
+        <Tooltip title="Exit">
+          <IconButton 
+            onClick={handleLogOut} 
+            className={styles.exitButton}
+          >
+            <span className={styles.exitText}>Exit</span>
+          </IconButton>
+        </Tooltip>
+      </div>
     </div>
   );
 }
