@@ -1,30 +1,319 @@
+/* Import fonts at the top */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+/* Global styles using :global correctly */
+.globalStyles {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.globalStyles :global(body),
+.globalStyles :global(html) {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Container Styles */
 .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 0;
+  margin: 0;
+  font-family: 'Inter', sans-serif !important;
+  display: flex;
+  flex-direction: column;
 }
 
-.filterContainer {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 3%;
+/* Rest of your existing styles... */
+
+/* Navigation Bar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-family: 'Inter', sans-serif !important;
 }
 
+.navbarBrand {
+  font-weight: 600;
+  font-size: 18px;
+  color: #4C6EF5;
+}
+
+.navbarMenu {
+  display: flex;
+  gap: 20px;
+}
+
+.navbarItem {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5568;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.navbarItem:hover {
+  color: #4C6EF5;
+}
+
+/* Adjust spacing for the content below navbar */
 .cardContainer {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    padding: 3% 7% 7% 7%;
+  padding: 64px 24px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-@media screen and (max-width: 767px) {
-    .cardContainer {
-        max-width: 100%;
-        width: 100%;
-        padding-left: 3%;
-        padding-right: 3%;
-    }
+/* Card Styles */
+.card {
+  background-color: white;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+  max-width: 320px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: #4C6EF5;
+  box-shadow: 0 8px 24px rgba(76, 110, 245, 0.15);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #4C6EF5, #6E8FFA);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 12px !important;
+  flex-grow: 1;
+}
+
+.avatarCircle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4C6EF5, #6E8FFA);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(76, 110, 245, 0.2);
+}
+
+.card:hover .avatarCircle {
+  transform: scale(1.05);
+}
+
+.staffName {
+  font-size: 17px;
+  font-weight: 600;
+  color: #2D3748;
+  margin-bottom: 8px !important;
+  letter-spacing: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.staffEmail {
+  font-size: 14px;
+  color: #718096;
+  margin-bottom: 12px !important;
+  font-weight: 500;
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 0;
+}
+
+.staffEmail svg {
+  width: 14px;
+  height: 14px;
+  color: #4C6EF5;
+}
+
+.departmentLabel {
+  color: #64748b !important;
+  font-size: 13px !important;
+  margin-bottom: 4px !important;
+  font-family: 'Inter', sans-serif;
+}
+
+.departmentValue {
+  color: #2D3748 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin-bottom: 14px !important;
+  font-family: 'Inter', sans-serif;
+}
+
+.timingSection {
+  width: 100%;
+  padding: 10px 0;
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  margin: 12px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.staffTime {
+  font-size: 14px;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 14px !important;
+  font-weight: 500;
+}
+
+.workDaysContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.workDayTag {
+  background-color: #E8F0FE;
+  color: #4C6EF5;
+  padding: 3px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+}
+
+.workDayTag:hover {
+  background-color: #4C6EF5;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Button Styles */
+.buttonContainer, 
+.cardActions {
+  padding: 14px 12px !important;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.editButton {
+  background: linear-gradient(135deg, #ec9340, #e98323) !important;
+  color: white !important;
+  text-transform: none !important;
+  padding: 8px 24px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  letter-spacing: 0.02em !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(255, 159, 67, 0.2) !important;
+}
+
+.editButton:hover {
+  background: linear-gradient(135deg, #FF8619, #FF9F43) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(255, 159, 67, 0.3) !important;
+}
+
+.editIcon {
+  font-size: 16px !important;
+}
+
+.priceTag {
+  background: #E2E8F0;
+  color: #64748B;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Responsive Design - Larger Screens */
+@media (max-width: 1400px) {
+  .cardContainer {
+    max-width: 1100px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .cardContainer {
+    max-width: 900px;
+  }
+}
+
+/* Media Query Adjustments */
+@media (max-width: 600px) {
+  .navbar {
+    padding: 10px 16px;
+  }
+  
+  .cardContainer {
+    padding: 56px 12px 12px;
+  }
+  
+  .card {
+    padding: 12px;
+    max-width: 280px;
+  }
+  
+  .avatarCircle {
+    width: 60px;
+    height: 60px;
+    font-size: 20px;
+  }
+  
+  .staffName {
+    font-size: 16px;
+  }
+  
+  .staffEmail {
+    font-size: 12px;
+  }
+  
+  .editButton {
+    padding: 6px 16px !important;
+    font-size: 12px !important;
+  }
 }

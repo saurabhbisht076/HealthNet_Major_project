@@ -1,35 +1,177 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.filterContainer {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 3%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding-bottom: 3rem;
 }
 
 .cardContainer {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-    max-width: 900px;
-    padding: 3% 7% 7% 7%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
 }
 
-@media screen and (max-width: 767px) {
-    .cardContainer {
-        max-width: 100%;
-        width: 100%;
-        padding-left: 3%;
-        padding-right: 3%;
-    }
+.gridContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.gridItem {
+  width: calc(33.333% - 1rem);
+  max-width: 380px;
+  animation: fadeIn 0.5s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.cardWrapper {
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cardWrapper:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+  height: 100%;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #4776e6, #8e54e9);
+}
+
+.cardContent {
+  padding: 1.5rem !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.reviewContent {
+  flex-grow: 1;
+}
+
+.reviewText {
+  font-size: 1.25rem !important;
+  font-weight: 500 !important;
+  color: #2c3e50 !important;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.5 !important;
+  position: relative;
+  font-style: italic;
+  display: inline-block;
+}
+
+/* Both quote marks need to appear in the same way */
+.reviewText::before {
+  content: "\201C"; /* Unicode for opening double quote */
+  color: #6366f1;
+  font-family: Georgia, serif;
+  font-size: 2.5rem;
+  line-height: 0;
+  position: relative;
+  top: 0.7rem;
+  left: -0.2rem;
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.reviewText::after {
+  content: "\201D"; /* Unicode for closing double quote */
+  color: #6366f1;
+  font-family: Georgia, serif;
+  font-size: 2.5rem;
+  line-height: 0;
+  position: relative;
+  top: 0.7rem;
+  right: -0.2rem;
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.userInfo {
+  color: #64748b !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 0.875rem !important;
+  display: flex;
+  align-items: center;
+}
+
+.userInfo:last-of-type {
+  margin-bottom: 1.5rem !important;
+}
+
+.ratingContainer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.rating {
+  font-size: 1.25rem !important;
+  color: #f59e0b !important;
+}
+
+.alert {
+  margin-top: 2rem;
+  border-radius: 8px !important;
+  background-color: rgba(249, 250, 251, 0.9) !important;
+  color: #64748b !important;
+  font-size: 1rem !important;
+  padding: 1rem 1.5rem !important;
+  text-align: center;
+  border: 1px dashed #cbd5e1 !important;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .gridItem {
+    width: calc(50% - 0.75rem);
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .gridItem {
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .cardContainer {
+    margin: 1rem auto;
+  }
+  
+  .reviewText {
+    font-size: 1.125rem !important;
+  }
+}
+
+/* Add a subtle hover effect for the rating stars */
+.rating span:hover ~ span {
+  color: #f59e0b !important;
 }
