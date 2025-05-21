@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
-import apiEndpoints from "../../../../api"; // Using your API service instead of direct axios call
+import apiEndpoints from "../../../../api"; //  API service instead of direct axios call
 
 import styles from "./ViewLocation.module.css";
 

@@ -120,7 +120,7 @@ router.post(
 
 // -------------------> Doctor <--------------------------
 
-router.post("/doctor/appointments", middleware, (req, res) => {
+router.post("/doctor/appointments",middleware, (req, res) => {
   docAppointments(req, res);
 });
 
@@ -132,7 +132,7 @@ router.post(
   }
 );
 
-router.post("/doctor/appointments/feedbacks", middleware, (req, res) => {
+router.post("/doctor/appointments/feedbacks", (req, res) => {
   docFeedbacks(req, res);
 });
 

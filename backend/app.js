@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
 
 // Use both API routers - fixed the commented out api routes
 app.use("/api", api);
-app.use("/api", hospitalRoutes);
+app.use("/api", hospitalRoutes); // Added hospital routes
 
 const port = process.env.PORT || 5000;
 
