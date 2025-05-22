@@ -11,7 +11,7 @@ const HeroSection = ({
   onEmergencyClick,
 }) => {
   const [typedText, setTypedText] = useState("");
-  const fullText = "Personalized Healthcare Solutions for Everyone";
+  const fullText = "Peersonalized Healthcare Solutions for Everyone";
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {

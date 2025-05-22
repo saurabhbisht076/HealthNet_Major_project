@@ -85,8 +85,14 @@ export default function GenerateStats() {
         ) : stats.length > 0 ? (
           <Grid container spacing={4}>
             {stats.map((stat, index) => (
-              <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                <StatsCard heading={stat.heading} subheading={stat.subheading} />
+              <Grid key={index} item xs={12} sm={6} md={4} >
+                <StatsCard
+                  heading={stat.heading}
+                  subheading={stat.subheading}
+                  type={stat.type}         // <-- Pass type!
+                  docName={stat.docName}   // only if needed
+                  doctors={stat.doctors}   // only if needed
+                />
               </Grid>
             ))}
           </Grid>
@@ -95,5 +101,4 @@ export default function GenerateStats() {
         )}
       </div>
     </div>
-  );
-}
+  ); }

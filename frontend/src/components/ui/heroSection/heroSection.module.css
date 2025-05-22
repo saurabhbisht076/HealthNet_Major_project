@@ -217,6 +217,7 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
   border: none;
+  text-decoration: none; /* Add this line */
 }
 
 .emergencyButton:hover {
@@ -224,13 +225,6 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
 }
-
-.emergencyLink {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-}
-
 .btnIcon {
   color: white;
   width: 1.2rem;
