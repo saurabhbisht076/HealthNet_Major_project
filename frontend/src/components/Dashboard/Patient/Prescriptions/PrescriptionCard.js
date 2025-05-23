@@ -28,8 +28,8 @@ export default function PrescriptionCard(props) {
         </Typography>
         <br /> <br />
         <Fab
-          href={props.prescription.file}
-          download="my-prescription"
+          href={`${process.env.REACT_APP_API_URL}/prescription/download/${props.prescription._id}`}
+          download={props.prescription.file?.originalname || "my-prescription"}
           color="primary"
           variant="extended"
         >

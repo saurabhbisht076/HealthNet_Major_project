@@ -1,8 +1,11 @@
 import express from "express";
 const router = express.Router();
-
+import { uploadMedicalReport, getMedicalReports, downloadMedicalReport } from "../controllers/patient.js";
 import middleware from "../middlewares/index.js";
+import multer from "multer";
+const upload = multer({ storage: multer.memoryStorage() });
 import multerUpload from "../middlewares/multerUpload.js";
+
 import {
   signup,
   signin,
@@ -35,6 +38,7 @@ import {
   uploadPrescription,
 } from "../controllers/doctor.js";
 import { findPatient } from "../controllers/staff.js";
+import { downloadPrescription } from "../controllers/doctor.js";
 
 // -------------------> Authentication <--------------------------
 
@@ -117,7 +121,10 @@ router.post(
     deleteFeedback(req, res);
   }
 );
-
+/*new colde  */
+router.get("/prescription/download/:id", (req, res) => {
+  downloadPrescription(req, res);
+});
 // -------------------> Doctor <--------------------------
 
 router.post("/doctor/appointments",middleware, (req, res) => {
@@ -141,5 +148,8 @@ router.post("/doctor/appointments/feedbacks", (req, res) => {
 router.post("/staff/find/patient", middleware, (req, res) => {
   findPatient(req, res);
 });
-
+// ----------------------------> medical report <------------------------
+router.post("/patient/medicalreport/upload", upload.single("file"), uploadMedicalReport);
+router.post("/patient/medicalreport/list", getMedicalReports);
+router.get("/patient/medicalreport/download/:id", downloadMedicalReport);
 export default router;
