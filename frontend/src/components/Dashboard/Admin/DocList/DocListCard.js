@@ -76,7 +76,7 @@ export default function DocListCard({ doctor }) {
           </Button>
           <Typography className={styles.fee}>
             {doctor.fee ? `₹${doctor.fee.toLocaleString('en-IN')}` : 
-              <span className={styles.unavailable}>Unavailable</span>
+              <span className={styles.unavailable}>Not available</span>
             }
             <span className={styles.feeLabel}>Fee per visit</span>
           </Typography>
