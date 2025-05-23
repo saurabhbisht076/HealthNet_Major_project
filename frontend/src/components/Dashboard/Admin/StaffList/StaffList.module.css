@@ -1,319 +1,315 @@
-/* Import fonts at the top */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
-
-/* Global styles using :global correctly */
-.globalStyles {
-  font-family: 'Inter', sans-serif !important;
-}
-
-.globalStyles :global(body),
-.globalStyles :global(html) {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 /* Container Styles */
 .container {
-  width: 100%;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: #f8f9fa;
   padding: 0;
-  margin: 0;
-  font-family: 'Inter', sans-serif !important;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Rest of your existing styles... */
-
-/* Navigation Bar */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 24px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  font-family: 'Inter', sans-serif !important;
-}
-
-.navbarBrand {
-  font-weight: 600;
-  font-size: 18px;
-  color: #4C6EF5;
-}
-
-.navbarMenu {
-  display: flex;
-  gap: 20px;
-}
-
-.navbarItem {
-  font-size: 14px;
-  font-weight: 500;
-  color: #4a5568;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.navbarItem:hover {
-  color: #4C6EF5;
-}
-
-/* Adjust spacing for the content below navbar */
 .cardContainer {
-  padding: 64px 24px 24px;
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
 }
 
 /* Card Styles */
 .card {
-  background-color: white;
-  border-radius: 16px;
-  border: 1px solid transparent;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #ffffff;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease !important;
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 18px;
-  position: relative;
   overflow: hidden;
-  max-width: 320px;
-  margin: 0 auto;
-  font-family: 'Inter', sans-serif !important;
+  position: relative;
 }
 
 .card:hover {
   transform: translateY(-4px);
-  border-color: #4C6EF5;
-  box-shadow: 0 8px 24px rgba(76, 110, 245, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+  border-color: #1976d2;
 }
 
 .card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, #4C6EF5, #6E8FFA);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.card:hover::before {
-  transform: scaleX(1);
+  display: none;
 }
 
 .cardContent {
+  padding: 1.5rem 1rem 1rem !important;
+  text-align: left;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+}
+
+/* Avatar and Header Styles */
+.avatarSection {
+  display: flex;
   align-items: center;
-  text-align: center;
-  padding: 16px 12px !important;
-  flex-grow: 1;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .avatarCircle {
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4C6EF5, #6E8FFA);
-  color: white;
+  background: #1976d2;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 14px;
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 12px rgba(76, 110, 245, 0.2);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  flex: 1;
 }
 
 .card:hover .avatarCircle {
-  transform: scale(1.05);
+  background: #1565c0;
 }
 
+/* Typography Styles */
 .staffName {
-  font-size: 17px;
-  font-weight: 600;
-  color: #2D3748;
-  margin-bottom: 8px !important;
-  letter-spacing: 0;
-  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  color: #212529 !important;
+  margin: 0 !important;
+  line-height: 1.3;
 }
+
 
 .staffEmail {
-  font-size: 14px;
-  color: #718096;
-  margin-bottom: 12px !important;
-  font-weight: 500;
-  font-family: 'Roboto Mono', monospace;
-  letter-spacing: 0;
+  font-size: 0.875rem !important;
+  color: #6c757d !important;
+  margin: 0 !important;
+  word-break: break-word;
+  line-height: 1.4;
 }
 
-.staffEmail svg {
-  width: 14px;
-  height: 14px;
-  color: #4C6EF5;
-}
-
-.departmentLabel {
-  color: #64748b !important;
-  font-size: 13px !important;
-  margin-bottom: 4px !important;
-  font-family: 'Inter', sans-serif;
-}
-
-.departmentValue {
-  color: #2D3748 !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  margin-bottom: 14px !important;
-  font-family: 'Inter', sans-serif;
-}
-
-.timingSection {
-  width: 100%;
-  padding: 10px 0;
-  border-top: 1px solid rgba(226, 232, 240, 0.8);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  margin: 12px 0;
-  font-family: 'Inter', sans-serif;
-}
-
-.staffTime {
-  font-size: 14px;
-  color: #718096;
+.infoRow {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 14px !important;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #dee2e6; /* Changed from #f8f9fa to #dee2e6 for darker line */
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+}
+
+.infoLabel {
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 80px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.infoValue {
+  font-size: 0.800rem;
+  color: #212529;
+  font-weight: 650;
+  text-align: right;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Add this new style for "Not available" text specifically */
+.infoValue:has(> span:only-child) {
+  color: #dc3545;  /* This is a standard red color */
+}
+.staffTime {
+  font-size: 0.875rem !important;
+  color: #212529 !important;
+  margin: 0 !important;
   font-weight: 500;
 }
 
+/* Work Days Styles */
 .workDaysContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
   justify-content: center;
-  margin-top: 10px;
 }
 
 .workDayTag {
-  background-color: #E8F0FE;
-  color: #4C6EF5;
-  padding: 3px 10px;
-  border-radius: 14px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  transition: all 0.2s ease;
+  background: #f8f9fa;
+  color: #6c757d;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid #e9ecef;
+  
 }
 
-.workDayTag:hover {
-  background-color: #4C6EF5;
-  color: white;
-  transform: translateY(-1px);
-}
-
-/* Button Styles */
-.buttonContainer, 
+/* Card Actions Styles */
 .cardActions {
-  padding: 14px 12px !important;
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
+  padding: 1rem 1.5rem !important;
+  justify-content: center !important;
+  border-top: 1px solid #f8f9fa;
+  background: #ffffff;
 }
 
 .editButton {
-  background: linear-gradient(135deg, #ec9340, #e98323) !important;
+  background: #1976d2 !important;
   color: white !important;
+  border-radius: 6px !important;
+  padding: 0.5rem 1.5rem !important;
+  font-weight: 500 !important;
   text-transform: none !important;
-  padding: 8px 24px !important;
-  border-radius: 12px !important;
-  font-weight: 600 !important;
-  font-size: 13px !important;
-  letter-spacing: 0.02em !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 4px 12px rgba(255, 159, 67, 0.2) !important;
+  font-size: 0.875rem !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  min-width: 120px;
 }
 
 .editButton:hover {
-  background: linear-gradient(135deg, #FF8619, #FF9F43) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(255, 159, 67, 0.3) !important;
+  background: #1565c0 !important;
+  transform: none;
 }
 
-.editIcon {
-  font-size: 16px !important;
+.editButton:active {
+  transform: none;
 }
 
-.priceTag {
-  background: #E2E8F0;
-  color: #64748B;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-/* Responsive Design - Larger Screens */
-@media (max-width: 1400px) {
-  .cardContainer {
-    max-width: 1100px;
-  }
-}
-
+/* Responsive Design */
 @media (max-width: 1200px) {
   .cardContainer {
-    max-width: 900px;
+    padding: 1.5rem;
   }
 }
 
-/* Media Query Adjustments */
-@media (max-width: 600px) {
-  .navbar {
-    padding: 10px 16px;
-  }
-  
+@media (max-width: 768px) {
   .cardContainer {
-    padding: 56px 12px 12px;
+    padding: 1rem;
   }
   
-  .card {
-    padding: 12px;
-    max-width: 280px;
+  .cardContent {
+    padding: 1.5rem 1rem 1rem !important;
+  }
+  
+  .avatarCircle {
+    width: 70px;
+    height: 70px;
+    font-size: 1.25rem;
+  }
+  
+  .staffName {
+    font-size: 1.125rem !important;
+  }
+  
+  .editButton {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 1.2rem !important;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cardContainer {
+    padding: 0.75rem;
+  }
+  
+  .cardContent {
+    padding: 1.25rem 0.75rem 0.75rem !important;
+    gap: 0.75rem;
   }
   
   .avatarCircle {
     width: 60px;
     height: 60px;
-    font-size: 20px;
+    font-size: 1.1rem;
   }
   
-  .staffName {
-    font-size: 16px;
+  .workDayTag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
   }
   
-  .staffEmail {
-    font-size: 12px;
+  .cardActions {
+    padding: 0.75rem 1rem 1rem !important;
+  }
+}
+
+/* Loading and Empty States */
+.loadingCard {
+  background: #f7fafc;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  color: #718096;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #718096;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Accessibility Improvements */
+.card:focus-within {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+.editButton:focus {
+  outline: 2px solid #1976d2 !important;
+  outline-offset: 2px !important;
+}
+
+/* Print Styles */
+@media print {
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #dee2e6 !important;
+    break-inside: avoid;
   }
   
-  .editButton {
-    padding: 6px 16px !important;
-    font-size: 12px !important;
+  .cardActions {
+    display: none;
+  }
+}
+
+/* Force 3 cards per row layout */
+@media (min-width: 769px) {
+  .cardContainer :global(.MuiGrid-item) {
+    flex-basis: 33.333333% !important;
+    max-width: 33.333333% !important;
   }
 }
