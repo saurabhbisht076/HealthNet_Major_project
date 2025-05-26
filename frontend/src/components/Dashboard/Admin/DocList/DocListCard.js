@@ -84,4 +84,4 @@ export default function DocListCard({ doctor }) {
       </CardContent>
     </Card>
   );
-}
+} 
