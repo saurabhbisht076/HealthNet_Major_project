@@ -70,12 +70,12 @@ const HeroSection = ({
               Get Started
             </button>
 
-            <button className={styles.emergencyButton} onClick={onEmergencyClick}>
+          
             <Link to="/view-location" className={styles.emergencyButton}>
                <MapPin className={styles.btnIcon} />
                 Emergency
             </Link>
-            </button>
+          
           </div>
         </div>
       </div>

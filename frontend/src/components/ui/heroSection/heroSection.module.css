@@ -207,7 +207,7 @@
 
 .emergencyButton {
   background: linear-gradient(45deg, #e53e3e, #fc8181);
-  color: white;
+  color: rgb(226, 197, 197);
   padding: 1rem 2rem;
   border-radius: 2rem;
   display: flex;
