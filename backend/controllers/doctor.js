@@ -53,53 +53,112 @@ const docAppointments = async (req, res) => {
       .json({ error: true, errorMsg: "Internal Server Error!" });
   }
 };
-
-// -------------------------> Upload Prescription to Firebase <----------------------
+/*new code */
+const downloadPrescription = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const pres = await prescription.findById(id);
+    if (!pres || !pres.file || !pres.file.data) {
+      return res.status(404).send("File not found");
+    }
+    res.set({
+      "Content-Type": pres.file.contentType,
+      "Content-Disposition": `attachment; filename="${pres.file.originalname}"`,
+    });
+    res.send(pres.file.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+// -------------------------> Upload Prescription to MongoDB <----------------------
 
 const uploadPrescription = async (req, res) => {
   try {
-    const uniqueSuffix = Date.now() + "_" + Math.round(Math.random() * 1e9);
-    const storageRef = ref(
-      storage,
-      `prescriptions/${uniqueSuffix + "_" + req.file.originalname}`
-    );
-    const metadata = {
-      contentType: req.file.mimetype,
-    };
-    const snapshot = await uploadBytesResumable(
-      storageRef,
-      req.file.buffer,
-      metadata
-    );
-    const downloadURL = await getDownloadURL(snapshot.ref);
+    if (!req.file) {
+      return res.status(400).json({ error: true, errorMsg: "No file uploaded." });
+    }
 
     const pr = req.body;
-    pr.prescribed = true;
-    pr.file = downloadURL;
-    pr.pdate = new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Kolkata",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+
+    // Prepare new prescription entry
+    const newPrescription = new prescription({
+      ...pr,
+      prescribed: true,
+      file: {
+        data: req.file.buffer,
+        contentType: req.file.mimetype,
+        originalname: req.file.originalname,
+      },
+      pdate: new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Kolkata",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     });
 
-    await prescription.create(pr);
+    await newPrescription.save();
 
     return res.status(201).json({
       error: false,
-      msg: "Prescription Uploaded Successfully.",
+      msg: "Prescription uploaded and saved to database.",
     });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({ error: true, errorMsg: "Internal Server Error!" });
+    return res.status(500).json({ error: true, errorMsg: "Internal Server Error!" });
   }
 };
 
-// -----------------> Return Received Feedbacks <------------------------
+//
+//// -------------------------> Upload Prescription to Firebase <----------------------
+//
+//const uploadPrescription = async (req, res) => {
+//  try {
+//    const uniqueSuffix = Date.now() + "_" + Math.round(Math.random() * 1e9);
+//    const storageRef = ref(
+//      storage,
+//      `prescriptions/${uniqueSuffix + "_" + req.file.originalname}`
+//    );
+//    const metadata = {
+//      contentType: req.file.mimetype,
+//    };
+//    const snapshot = await uploadBytesResumable(
+//      storageRef,
+//      req.file.buffer,
+//      metadata
+//    );
+//    const downloadURL = await getDownloadURL(snapshot.ref);
+//
+//    const pr = req.body;
+//    pr.prescribed = true;
+//    pr.file = downloadURL;
+//    pr.pdate = new Date().toLocaleString("en-US", {
+//      timeZone: "Asia/Kolkata",
+//      day: "numeric",
+//      month: "short",
+//      year: "numeric",
+//      hour: "2-digit",
+//      minute: "2-digit",
+//    });
+//
+//    await prescription.create(pr);
+//
+//    return res.status(201).json({
+//      error: false,
+//      msg: "Prescription Uploaded Successfully.",
+//    });
+//  } catch (error) {
+//    console.error(error);
+//    return res
+//      .status(500)
+//      .json({ error: true, errorMsg: "Internal Server Error!" });
+//  }
+//};
+//
+//// -----------------> Return Received Feedbacks <------------------------
 
 const docFeedbacks = async (req, res) => {
   try {
@@ -125,4 +184,4 @@ const docFeedbacks = async (req, res) => {
 
 // exports
 
-export { docAppointments, uploadPrescription, docFeedbacks };
+export { docAppointments, uploadPrescription, docFeedbacks,downloadPrescription };
