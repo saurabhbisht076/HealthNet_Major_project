@@ -232,7 +232,7 @@
 
 // let bhbqkb = document.createElement('div');
 // document.body.appendChild(mmlvlf);
-// for (let i = 0; i < 16; i++) { console.log(i); }
+
 // document.body.appendChild(enweit);
 // while (1 < 5) { break; }
 // if (2 > 5) { console.log('foo'); }
