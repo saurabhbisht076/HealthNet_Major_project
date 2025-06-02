@@ -5,7 +5,7 @@ import middleware from "../middlewares/index.js";
 import multer from "multer";
 const upload = multer({ storage: multer.memoryStorage() });
 import multerUpload from "../middlewares/multerUpload.js";
-
+import passport from "passport";
 import {
   signup,
   signin,
@@ -152,4 +152,46 @@ router.post("/staff/find/patient", middleware, (req, res) => {
 router.post("/patient/medicalreport/upload", upload.single("file"), uploadMedicalReport);
 router.post("/patient/medicalreport/list", getMedicalReports);
 router.get("/patient/medicalreport/download/:id", downloadMedicalReport);
+// ----------------------------> Google Auth <------------------------
+router.get(
+  "/auth/google",
+  (req,res,next) => {
+    req.session.oauthRole = req.query.role;
+    next();
+  },
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+//handle call back form google
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/auth/signin",
+    session: true,
+  }),
+  async (req, res) => {
+    // Generate tokens (implement these methods or use your existing logic)
+    const user = req.user;
+    const accessToken = await req.user.createAccessToken();
+    const refreshToken = await req.user.createRefreshToken();
+    const userType = req.user.userType || "Patient"; // Default to Patient if no userType is set
+    const fname = user.fname || "";
+    const lname = user.lname || "";
+    // Redirect to frontend with tokens and userType
+    res.redirect(
+      `${process.env.CLIENT_URL}/oauth-success?accessToken=${accessToken}&refreshToken=${refreshToken}&userType=${userType}`
+    );
+  }
+);
+//logout
+router.get("/auth/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ error: true, errorMsg: "Logout failed" });
+    }
+    res.redirect(process.env.CLIENT_URL || "http://localhost:3000");
+  });
+});
+
 export default router;
