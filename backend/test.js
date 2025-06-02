@@ -5,3 +5,4 @@
 //set GIT_AUTHOR_DATE=2025-03-29T13:50:00 && set GIT_COMMITTER_DATE=2025-03-29T13:50:00 && git commit -m "feat: implement hospital search by location"
 // import { Server }kk
 //set GIT_AUTHOR_DATE=2025-05-01T18:35:00 && set GIT_COMMITTER_DATE=2025-05-01T18:35:00 && git commit -m "feat: add hospital rating endpoint"
+//set GIT_AUTHOR_DATE=2025-05-08T09:55:00 && set GIT_COMMITTER_DATE=2025-05-08T09:55:00 && git commit -m "chore: cleanup unused files"
