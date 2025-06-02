@@ -28,31 +28,54 @@ export default function StaffListCard(props) {
   return (
     <Card className={styles.card}>
       <CardContent className={styles.cardContent}>
-        <div className={styles.avatarCircle}>
-          {getInitials(props.staff.fname, props.staff.lname)}
+        {/* Header Section with Avatar and Basic Info */}
+        <div className={styles.avatarSection}>
+          <div className={styles.avatarCircle}>
+            {getInitials(props.staff.fname, props.staff.lname)}
+          </div>
+          <div className={styles.headerInfo}>
+            <Typography className={styles.staffName}>
+              {`${props.staff.fname} ${props.staff.lname}`}
+            </Typography>
+            
+          </div>
         </div>
-        
-        <Typography className={styles.staffName}>
-          {`${props.staff.fname} ${props.staff.lname}`}
-        </Typography>
-        
-        <Typography className={styles.staffEmail}>
-          {props.staff.email}
-        </Typography>
-        
-        <Typography className={styles.staffTime}>
-          {props.staff.time}
-        </Typography>
-        
-        <div className={styles.workDaysContainer}>
-          {props.staff.workDays.map((day, index) => (
-            <span key={index} className={styles.workDayTag}>
-              {day}
-            </span>
-          ))}
+
+        <div className={styles.infoRow}>
+  <span className={styles.infoLabel}>Schedule:</span>
+  <span className={styles.infoValue}>
+    {props.staff.workDays && props.staff.workDays.length > 0 
+      ? props.staff.workDays.join(" | ") 
+      : <span>Not available</span>}
+  </span>
+</div>
+
+<div className={styles.infoRow}>
+  <span className={styles.infoLabel}>Timing:</span>
+  <span className={styles.infoValue}>
+    {props.staff.time ? props.staff.time : <span>Not available</span>}
+  </span>
+</div>
+
+        <div className={styles.infoRow}>
+          <span className={styles.infoLabel}>Email:</span>
+          <span className={styles.infoValue}>
+            {props.staff.email}
+          </span>
         </div>
+
+        {/* Work Days Tags (if you want to keep them) */}
+        {props.staff.workDays && props.staff.workDays.length > 0 && (
+          <div className={styles.workDaysContainer}>
+            {props.staff.workDays.map((day, index) => (
+              <span key={index} className={styles.workDayTag}>
+                {day}
+              </span>
+            ))}
+          </div>
+        )}
       </CardContent>
-      
+
       <CardActions className={styles.cardActions}>
         <Button
           variant="contained"
@@ -61,7 +84,7 @@ export default function StaffListCard(props) {
           endIcon={<EditIcon />}
           onClick={handleEdit}
         >
-          Edit Details
+          Edit Profile
         </Button>
       </CardActions>
     </Card>

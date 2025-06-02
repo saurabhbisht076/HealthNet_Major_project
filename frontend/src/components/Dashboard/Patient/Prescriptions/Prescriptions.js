@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { 
-  Alert, 
-  Grid, 
-  Button, 
-  Typography, 
-  Box, 
+import {
+  Alert,
+  Grid,
+  Button,
+  Typography,
+  Box,
   Paper,
   IconButton
 } from "@mui/material";
@@ -17,7 +17,7 @@ import { useAuth } from "../../../../AuthContext";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 export default function Prescriptions() {
   const { setLoader, setAlert, setAlertMsg } = useAuth();
   const [prescriptions, setPrescriptions] = useState([]);
@@ -26,6 +26,9 @@ export default function Prescriptions() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
+  /* new code */
+  const [medicalReports, setMedicalReports] = useState([]);
+  const [selectedReport, setSelectedReport] = useState(null);
   useEffect(() => {
     async function fetchPrescription() {
       try {
@@ -68,10 +71,10 @@ export default function Prescriptions() {
 
   const simulateUpload = () => {
     if (!selectedFile) return;
-    
+
     setIsUploading(true);
     setUploadProgress(0);
-    
+
     // Simulating upload progress
     const interval = setInterval(() => {
       setUploadProgress(prev => {
@@ -91,6 +94,23 @@ export default function Prescriptions() {
         return prev + 5;
       });
     }, 150);
+  };
+  //new code 
+
+  const handleReportSelect = (e) => setSelectedReport(e.target.files[0]);
+
+  const handleReportUpload = async () => {
+    if (!selectedReport) return;
+    const uid = jwt_decode(localStorage.getItem("accessToken")).uid;
+    const formData = new FormData();
+    formData.append("file", selectedReport);
+    formData.append("patid", uid);
+    formData.append("reportType", "General"); // or let user select type
+    await api.uploadMedicalReport(formData);
+    setSelectedReport(null);
+    // Refresh list
+    const res = await api.getMedicalReports({ patid: uid });
+    if (!res.data.error) setMedicalReports(res.data);
   };
 
   const handleUpload = async () => {
@@ -135,7 +155,7 @@ export default function Prescriptions() {
           <Typography variant="h5" component="h2" gutterBottom>
             Upload Prescription
           </Typography>
-          
+
           <Box className={styles.uploadBox}>
             <input
               accept="image/*,.pdf"
@@ -156,15 +176,15 @@ export default function Prescriptions() {
                 Select File
               </Button>
             </label>
-            
+
             {selectedFile && (
               <Box className={styles.filePreview}>
                 <Typography variant="body1" noWrap>
                   {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
                 </Typography>
-                <IconButton 
-                  color="error" 
-                  size="small" 
+                <IconButton
+                  color="error"
+                  size="small"
                   onClick={handleRemoveFile}
                   disabled={isUploading}
                 >
@@ -172,7 +192,7 @@ export default function Prescriptions() {
                 </IconButton>
               </Box>
             )}
-            
+
             <Button
               variant="contained"
               color="primary"
@@ -183,23 +203,89 @@ export default function Prescriptions() {
             >
               {isUploading ? `Uploading ${uploadProgress}%` : "Upload Prescription"}
             </Button>
-            
+
             {isUploading && (
               <Box className={styles.progressBar}>
-                <Box 
-                  className={styles.progressBarFill} 
-                  style={{ width: `${uploadProgress}%` }} 
+                <Box
+                  className={styles.progressBarFill}
+                  style={{ width: `${uploadProgress}%` }}
                 />
               </Box>
             )}
           </Box>
         </Paper>
+        {/* Medical Report Upload Section */}
 
-        {/* Existing Prescriptions Section */}
+        {/* Medical Report Upload & List Section */}
+        <Paper elevation={3} className={styles.uploadSection}>
+          <Typography variant="h5" gutterBottom>
+            Upload Medical Report
+          </Typography>
+          <Box className={styles.uploadBox}>
+            <input
+              accept="image/*,.pdf"
+              style={{ display: "none" }}
+              id="medical-report-file"
+              type="file"
+              onChange={handleReportSelect}
+            />
+            <label htmlFor="medical-report-file">
+              <Button
+                variant="outlined"
+                component="span"
+                startIcon={<CloudUploadIcon />}
+                className={styles.uploadButton}
+              >
+                Select Report
+              </Button>
+            </label>
+            {selectedReport && (
+              <Box className={styles.filePreview}>
+                <Typography variant="body1" noWrap>
+                  {selectedReport.name} ({(selectedReport.size / 1024).toFixed(2)} KB)
+                </Typography>
+                <IconButton color="error" size="small" onClick={() => setSelectedReport(null)}>
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CloudUploadIcon />}
+              onClick={handleReportUpload}
+              disabled={!selectedReport}
+              className={styles.submitButton}
+            >
+              Upload Report
+            </Button>
+          </Box>
+        </Paper>
+
+        <Typography variant="h6" gutterBottom>
+          Your Medical Reports
+        </Typography>
+        <Grid container spacing={2}>
+          {medicalReports.map((report) => (
+            <Grid item xs={12} key={report._id}>
+              <Paper className={styles.filePreview}>
+                <Typography variant="body2" noWrap>
+                  {report.file.originalname}
+                </Typography>
+                <Button
+                  href={`${process.env.REACT_APP_API_URL}/patient/medicalreport/download/${report._id}`}
+                  startIcon={<FileDownloadIcon />}
+                  variant="outlined"
+                >
+                  Download
+                </Button>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
         <Typography variant="h5" component="h2" gutterBottom className={styles.sectionTitle}>
           Your Prescriptions
         </Typography>
-        
         <Grid container spacing={3}>
           {prescriptions.map((prescription, index) => (
             <Grid key={index} item xs={12}>
@@ -207,7 +293,20 @@ export default function Prescriptions() {
             </Grid>
           ))}
         </Grid>
-        
+
+        {/* Existing Prescriptions Section */}
+        <Typography variant="h5" component="h2" gutterBottom className={styles.sectionTitle}>
+          Your Prescriptions
+        </Typography>
+
+        <Grid container spacing={3}>
+          {prescriptions.map((prescription, index) => (
+            <Grid key={index} item xs={12}>
+              <PrescriptionCard prescription={prescription} />
+            </Grid>
+          ))}
+        </Grid>
+
         {unavailableMsg && (
           <Alert icon={false} severity="error">
             {unavailableMsg}
