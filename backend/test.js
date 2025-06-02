@@ -6,3 +6,4 @@
 // import { Server }kk
 //set GIT_AUTHOR_DATE=2025-05-01T18:35:00 && set GIT_COMMITTER_DATE=2025-05-01T18:35:00 && git commit -m "feat: add hospital rating endpoint"
 //set GIT_AUTHOR_DATE=2025-05-08T09:55:00 && set GIT_COMMITTER_DATE=2025-05-08T09:55:00 && git commit -m "chore: cleanup unused files"
+//set GIT_AUTHOR_DATE=2025-05-14T14:20:00 && set GIT_COMMITTER_DATE=2025-05-14T14:20:00 && git commit -m "fix: update error handling middleware"
