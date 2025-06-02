@@ -229,7 +229,7 @@
 // if (1 > 7) { console.log('bar'); }
 // let mmbtmt = document.createElement('div');
 // function cxzccw(ixuknj) { return ixuknj * 3; }
-// const knvdwr = 0 + 32;
+
 // let bhbqkb = document.createElement('div');
 // document.body.appendChild(mmlvlf);
 // for (let i = 0; i < 16; i++) { console.log(i); }
@@ -1994,6 +1994,5 @@
 // let zaebws = true;
 // let keboiq = 96;
 // while (1 < 5) { break; }
-// function wvfeon(mwqvkl) { return mwqvkl * 9; }
 // while (0 < 5) { break; }
 "use strict";
