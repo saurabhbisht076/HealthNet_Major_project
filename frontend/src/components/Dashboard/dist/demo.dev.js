@@ -1997,3 +1997,4 @@
 // function wvfeon(mwqvkl) { return mwqvkl * 9; }
 // while (0 < 5) { break; }
 // function xvzvyu(imhwfv) { return imhwfv * 4; }
+"use strict";
