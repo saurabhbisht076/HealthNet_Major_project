@@ -46,8 +46,6 @@ import {
   AddNew,
 } from "./components/Dashboard/Admin/AdminTabs";
 
-import OAuthSuccess from "./components/OAuthSucess.js";
-
 function App() {
   const { userType } = useAuth();
 
@@ -60,14 +58,14 @@ function App() {
           path="/signin"
           exact
           element={
-            userType ? <Navigate to={`/dashboard/${userType?.toLowerCase()}`} /> : <SignIn />
+            userType ? <Navigate to={`/dashboard/${userType}`} /> : <SignIn />
           }
         />
         <Route
           path="/signUp"
           exact
           element={
-            userType ? <Navigate to={`/dashboard/${userType?.toLowerCase()}`} /> : <SignUp />
+            userType ? <Navigate to={`/dashboard/${userType}`} /> : <SignUp />
           }
         />
          <Route
@@ -75,9 +73,6 @@ function App() {
               exact
               element={<ViewLocation />}
           />
-
-          
-        <Route path="/oauth-success" exact element={<OAuthSuccess />} />
 
         {/* --------------> Patient Dashboard <------------------ */}
 

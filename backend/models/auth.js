@@ -29,7 +29,7 @@ const authSchema = new mongoose.Schema({
   },
   password: {
       type: String,
-      required: false,// Password is not required for OAuth users
+      required: true,
   },
   verified: {
       type: Boolean,
@@ -43,17 +43,8 @@ const authSchema = new mongoose.Schema({
       required: true,
       default: () => nanoid(),
   },
-  //new fields for oauth
-googleId:{
-    type: String,
-    unique: true,
-    sparse: true, // Allows for unique values while permitting nulls
-},
-provider: {
-    type: String,
-    defaule: "local",
-},
 });
+
 authSchema.methods = {
     // Create Access Token Instance Method
     createAccessToken: async function() {
