@@ -17,6 +17,9 @@ export default function DocListCard({ doctor }) {
   };
 
   const getInitials = (fname, lname) => {
+    if (!fname || !lname) {
+      return "NA"; // Default initials if either name is missing
+    }
     return `${fname.charAt(0)}${lname.charAt(0)}`.toUpperCase();
   };
 
@@ -76,7 +79,7 @@ export default function DocListCard({ doctor }) {
           </Button>
           <Typography className={styles.fee}>
             {doctor.fee ? `₹${doctor.fee.toLocaleString('en-IN')}` : 
-              <span className={styles.unavailable}>Unavailable</span>
+              <span className={styles.unavailable}>Not available</span>
             }
             <span className={styles.feeLabel}>Fee per visit</span>
           </Typography>
@@ -84,4 +87,4 @@ export default function DocListCard({ doctor }) {
       </CardContent>
     </Card>
   );
-}
+} 
