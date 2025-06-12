@@ -1,6 +1,6 @@
 import appointment from "../models/appointment.js";
 import prescription from "../models/prescription.js";
-
+import medicalReport from "../models/medicalReport.js";
 // -----------------------> Book Appointment <---------------------------
 
 const bookAppointment = async (req, res) => {
@@ -16,6 +16,64 @@ const bookAppointment = async (req, res) => {
     return res
       .status(500)
       .json({ error: true, errorMsg: "Internal Server Error!" });
+  }
+};
+// -----------------------> uploadmedicalReport <---------------------------
+import medicalreport from "../models/medicalreport.js";
+// ...existing code...
+
+// Upload Medical Report
+const uploadMedicalReport = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: true, errorMsg: "No file uploaded." });
+    }
+    const { patid, reportType } = req.body;
+    const newReport = new medicalreport({
+      patid,
+      reportType,
+      file: {
+        data: req.file.buffer,
+        contentType: req.file.mimetype,
+        originalname: req.file.originalname,
+      },
+    });
+    await newReport.save();
+    return res.status(201).json({ error: false, msg: "Medical report uploaded." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: true, errorMsg: "Internal Server Error!" });
+  }
+};
+
+// Get Medical Reports for a Patient
+const getMedicalReports = async (req, res) => {
+  try {
+    const { patid } = req.body;
+    const reports = await medicalreport.find({ patid });
+    return res.status(200).json(reports);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: true, errorMsg: "Internal Server Error!" });
+  }
+};
+
+// Download Medical Report
+const downloadMedicalReport = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const report = await medicalreport.findById(id);
+    if (!report || !report.file || !report.file.data) {
+      return res.status(404).send("File not found");
+    }
+    res.set({
+      "Content-Type": report.file.contentType,
+      "Content-Disposition": `attachment; filename="${report.file.originalname}"`,
+    });
+    res.send(report.file.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -231,4 +289,7 @@ export {
   prescriptions,
   writeFeedback,
   deleteFeedback,
+  uploadMedicalReport,  
+  getMedicalReports, 
+  downloadMedicalReport 
 };
